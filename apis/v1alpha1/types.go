@@ -27,3 +27,150 @@ var (
 	_ = &aws.JSONValue{}
 	_ = ackv1alpha1.AWSAccountID("")
 )
+
+// An access point used to access a bucket.
+type AccessPoint_SDK struct {
+	AccessPointARN  *string `json:"accessPointARN,omitempty"`
+	Alias           *string `json:"alias,omitempty"`
+	Bucket          *string `json:"bucket,omitempty"`
+	BucketAccountID *string `json:"bucketAccountID,omitempty"`
+	Name            *string `json:"name,omitempty"`
+	NetworkOrigin   *string `json:"networkOrigin,omitempty"`
+	// The virtual private cloud (VPC) configuration for an access point.
+	VPCConfiguration *VPCConfiguration `json:"vpcConfiguration,omitempty"`
+}
+
+// A container for the information associated with a CreateMultiRegionAccessPoint
+// (https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_CreateMultiRegionAccessPoint.html)
+// request.
+type CreateMultiRegionAccessPointInput struct {
+	// The PublicAccessBlock configuration that you want to apply to this Amazon
+	// S3 account. You can enable the configuration options in any combination.
+	// For more information about when Amazon S3 considers a bucket or object public,
+	// see The Meaning of "Public" (https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status)
+	// in the Amazon S3 User Guide.
+	//
+	// This data type is not supported for Amazon S3 on Outposts.
+	PublicAccessBlock *PublicAccessBlockConfiguration `json:"publicAccessBlock,omitempty"`
+}
+
+// Specifies information about the replication destination bucket and its settings
+// for an S3 on Outposts replication configuration.
+type Destination struct {
+	Account *string `json:"account,omitempty"`
+}
+
+// Contains the information required to locate a manifest object. Manifests
+// can't be imported from directory buckets. For more information, see Directory
+// buckets (https://docs.aws.amazon.com/AmazonS3/latest/userguide/directory-buckets-overview.html).
+type JobManifestLocation struct {
+	ETag *string `json:"eTag,omitempty"`
+}
+
+// A collection of statuses for a Multi-Region Access Point in the various Regions
+// it supports.
+type MultiRegionAccessPointReport struct {
+	// The PublicAccessBlock configuration that you want to apply to this Amazon
+	// S3 account. You can enable the configuration options in any combination.
+	// For more information about when Amazon S3 considers a bucket or object public,
+	// see The Meaning of "Public" (https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status)
+	// in the Amazon S3 User Guide.
+	//
+	// This data type is not supported for Amazon S3 on Outposts.
+	PublicAccessBlock *PublicAccessBlockConfiguration `json:"publicAccessBlock,omitempty"`
+}
+
+// A structure for a Multi-Region Access Point that indicates where Amazon S3
+// traffic can be routed. Routes can be either active or passive. Active routes
+// can process Amazon S3 requests through the Multi-Region Access Point, but
+// passive routes are not eligible to process Amazon S3 requests.
+//
+// Each route contains the Amazon S3 bucket name and the Amazon Web Services
+// Region that the bucket is located in. The route also includes the TrafficDialPercentage
+// value, which shows whether the bucket and Region are active (indicated by
+// a value of 100) or passive (indicated by a value of 0).
+type MultiRegionAccessPointRoute struct {
+	Bucket *string `json:"bucket,omitempty"`
+}
+
+// The PublicAccessBlock configuration that you want to apply to this Amazon
+// S3 account. You can enable the configuration options in any combination.
+// For more information about when Amazon S3 considers a bucket or object public,
+// see The Meaning of "Public" (https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status)
+// in the Amazon S3 User Guide.
+//
+// This data type is not supported for Amazon S3 on Outposts.
+type PublicAccessBlockConfiguration struct {
+	BlockPublicACLs       *bool `json:"blockPublicACLs,omitempty"`
+	BlockPublicPolicy     *bool `json:"blockPublicPolicy,omitempty"`
+	IgnorePublicACLs      *bool `json:"ignorePublicACLs,omitempty"`
+	RestrictPublicBuckets *bool `json:"restrictPublicBuckets,omitempty"`
+}
+
+// A Region that supports a Multi-Region Access Point as well as the associated
+// bucket for the Region.
+type Region struct {
+	Bucket          *string `json:"bucket,omitempty"`
+	BucketAccountID *string `json:"bucketAccountID,omitempty"`
+}
+
+// A combination of a bucket and Region that's part of a Multi-Region Access
+// Point.
+type RegionReport struct {
+	Bucket          *string `json:"bucket,omitempty"`
+	BucketAccountID *string `json:"bucketAccountID,omitempty"`
+}
+
+// The container for the regional bucket.
+type RegionalBucket struct {
+	Bucket       *string      `json:"bucket,omitempty"`
+	CreationDate *metav1.Time `json:"creationDate,omitempty"`
+}
+
+// A container for the bucket where the Amazon S3 Storage Lens metrics export
+// files are located.
+type S3BucketDestination struct {
+	AccountID *string `json:"accountID,omitempty"`
+}
+
+// Contains the configuration parameters for a PUT Copy object operation. S3
+// Batch Operations passes every object to the underlying CopyObject API operation.
+// For more information about the parameters for this operation, see CopyObject
+// (https://docs.aws.amazon.com/AmazonS3/latest/API/RESTObjectCOPY.html).
+type S3CopyObjectOperation struct {
+	TargetKeyPrefix *string `json:"targetKeyPrefix,omitempty"`
+}
+
+type S3Grantee struct {
+	DisplayName *string `json:"displayName,omitempty"`
+	Identifier  *string `json:"identifier,omitempty"`
+}
+
+// The container for the service that will create the S3 manifest.
+type S3JobManifestGenerator struct {
+	ExpectedBucketOwner *string `json:"expectedBucketOwner,omitempty"`
+}
+
+// Location details for where the generated manifest should be written.
+type S3ManifestOutputLocation struct {
+	ExpectedManifestBucketOwner *string `json:"expectedManifestBucketOwner,omitempty"`
+}
+
+type S3ObjectMetadata struct {
+	CacheControl       *string `json:"cacheControl,omitempty"`
+	ContentDisposition *string `json:"contentDisposition,omitempty"`
+	ContentEncoding    *string `json:"contentEncoding,omitempty"`
+	ContentLanguage    *string `json:"contentLanguage,omitempty"`
+	ContentMD5         *string `json:"contentMD5,omitempty"`
+	ContentType        *string `json:"contentType,omitempty"`
+}
+
+type S3ObjectOwner struct {
+	DisplayName *string `json:"displayName,omitempty"`
+	ID          *string `json:"id,omitempty"`
+}
+
+// The virtual private cloud (VPC) configuration for an access point.
+type VPCConfiguration struct {
+	VPCID *string `json:"vpcID,omitempty"`
+}

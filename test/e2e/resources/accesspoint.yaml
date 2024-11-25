@@ -1,0 +1,10 @@
+apiVersion: s3control.services.k8s.aws/v1alpha1
+kind: AccessPoint
+metadata:
+  name: $ACCESS_POINT_NAME
+spec:
+  name: $ACCESS_POINT_NAME
+  bucket: $BUCKET_NAME
+  accountID: $ACCOUNT_ID
+  publicAccessBlockConfiguration:
+    blockPublicACLs: true

@@ -1,11 +1,15 @@
 ignore:
   resource_names:
-      - AccessGrant
-      - AccessGrantsInstance
-      - AccessGrantsLocation
-      - AccessPoint
-      - AccessPointForObjectLambda
-      - Bucket
-      - Job
-      - MultiRegionAccessPoint
-      - StorageLensGroup
+    - AccessGrant
+    - AccessGrantsInstance
+    - AccessGrantsLocation
+    # AccessPoint
+    - AccessPointForObjectLambda
+    - Bucket
+    - Job
+    - MultiRegionAccessPoint
+    - StorageLensGroup
+resources:
+  AccessPoint:
+    tags:
+      ignore: true

@@ -9,6 +9,7 @@ rules:
 - apiGroups:
   - s3control.services.k8s.aws
   resources:
+  - accesspoints
   verbs:
   - get
   - list

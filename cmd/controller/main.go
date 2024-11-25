@@ -39,6 +39,8 @@ import (
 	svcresource "github.com/aws-controllers-k8s/s3control-controller/pkg/resource"
 	svcsdk "github.com/aws/aws-sdk-go/service/s3control"
 
+	_ "github.com/aws-controllers-k8s/s3control-controller/pkg/resource/access_point"
+
 	"github.com/aws-controllers-k8s/s3control-controller/pkg/version"
 )
 
