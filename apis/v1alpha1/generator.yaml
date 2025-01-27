@@ -11,5 +11,11 @@ ignore:
     - StorageLensGroup
 resources:
   AccessPoint:
+    exceptions:
+      errors:
+        404:
+          code: NoSuchAccessPoint
     tags:
       ignore: true
+sdk_names:
+  model_name: s3-control
