@@ -26,26 +26,26 @@ const (
 type BucketCannedACL string
 
 const (
+	BucketCannedACL_authenticated_read BucketCannedACL = "authenticated-read"
 	BucketCannedACL_private            BucketCannedACL = "private"
 	BucketCannedACL_public_read        BucketCannedACL = "public-read"
 	BucketCannedACL_public_read_write  BucketCannedACL = "public-read-write"
-	BucketCannedACL_authenticated_read BucketCannedACL = "authenticated-read"
 )
 
 type BucketLocationConstraint string
 
 const (
 	BucketLocationConstraint_EU             BucketLocationConstraint = "EU"
-	BucketLocationConstraint_eu_west_1      BucketLocationConstraint = "eu-west-1"
-	BucketLocationConstraint_us_west_1      BucketLocationConstraint = "us-west-1"
-	BucketLocationConstraint_us_west_2      BucketLocationConstraint = "us-west-2"
+	BucketLocationConstraint_ap_northeast_1 BucketLocationConstraint = "ap-northeast-1"
 	BucketLocationConstraint_ap_south_1     BucketLocationConstraint = "ap-south-1"
 	BucketLocationConstraint_ap_southeast_1 BucketLocationConstraint = "ap-southeast-1"
 	BucketLocationConstraint_ap_southeast_2 BucketLocationConstraint = "ap-southeast-2"
-	BucketLocationConstraint_ap_northeast_1 BucketLocationConstraint = "ap-northeast-1"
-	BucketLocationConstraint_sa_east_1      BucketLocationConstraint = "sa-east-1"
 	BucketLocationConstraint_cn_north_1     BucketLocationConstraint = "cn-north-1"
 	BucketLocationConstraint_eu_central_1   BucketLocationConstraint = "eu-central-1"
+	BucketLocationConstraint_eu_west_1      BucketLocationConstraint = "eu-west-1"
+	BucketLocationConstraint_sa_east_1      BucketLocationConstraint = "sa-east-1"
+	BucketLocationConstraint_us_west_1      BucketLocationConstraint = "us-west-1"
+	BucketLocationConstraint_us_west_2      BucketLocationConstraint = "us-west-2"
 )
 
 type BucketVersioningStatus string
@@ -58,22 +58,22 @@ const (
 type DeleteMarkerReplicationStatus string
 
 const (
-	DeleteMarkerReplicationStatus_Enabled  DeleteMarkerReplicationStatus = "Enabled"
 	DeleteMarkerReplicationStatus_Disabled DeleteMarkerReplicationStatus = "Disabled"
+	DeleteMarkerReplicationStatus_Enabled  DeleteMarkerReplicationStatus = "Enabled"
 )
 
 type ExistingObjectReplicationStatus string
 
 const (
-	ExistingObjectReplicationStatus_Enabled  ExistingObjectReplicationStatus = "Enabled"
 	ExistingObjectReplicationStatus_Disabled ExistingObjectReplicationStatus = "Disabled"
+	ExistingObjectReplicationStatus_Enabled  ExistingObjectReplicationStatus = "Enabled"
 )
 
 type ExpirationStatus string
 
 const (
-	ExpirationStatus_Enabled  ExpirationStatus = "Enabled"
 	ExpirationStatus_Disabled ExpirationStatus = "Disabled"
+	ExpirationStatus_Enabled  ExpirationStatus = "Enabled"
 )
 
 type Format string
@@ -92,16 +92,16 @@ const (
 type GranteeType string
 
 const (
-	GranteeType_DIRECTORY_USER  GranteeType = "DIRECTORY_USER"
 	GranteeType_DIRECTORY_GROUP GranteeType = "DIRECTORY_GROUP"
+	GranteeType_DIRECTORY_USER  GranteeType = "DIRECTORY_USER"
 	GranteeType_IAM             GranteeType = "IAM"
 )
 
 type JobManifestFieldName string
 
 const (
-	JobManifestFieldName_Ignore    JobManifestFieldName = "Ignore"
 	JobManifestFieldName_Bucket    JobManifestFieldName = "Bucket"
+	JobManifestFieldName_Ignore    JobManifestFieldName = "Ignore"
 	JobManifestFieldName_Key       JobManifestFieldName = "Key"
 	JobManifestFieldName_VersionId JobManifestFieldName = "VersionId"
 )
@@ -147,33 +147,33 @@ const (
 type MFADelete string
 
 const (
-	MFADelete_Enabled  MFADelete = "Enabled"
 	MFADelete_Disabled MFADelete = "Disabled"
+	MFADelete_Enabled  MFADelete = "Enabled"
 )
 
 type MFADeleteStatus string
 
 const (
-	MFADeleteStatus_Enabled  MFADeleteStatus = "Enabled"
 	MFADeleteStatus_Disabled MFADeleteStatus = "Disabled"
+	MFADeleteStatus_Enabled  MFADeleteStatus = "Enabled"
 )
 
 type MetricsStatus string
 
 const (
-	MetricsStatus_Enabled  MetricsStatus = "Enabled"
 	MetricsStatus_Disabled MetricsStatus = "Disabled"
+	MetricsStatus_Enabled  MetricsStatus = "Enabled"
 )
 
 type MultiRegionAccessPointStatus string
 
 const (
-	MultiRegionAccessPointStatus_READY                       MultiRegionAccessPointStatus = "READY"
-	MultiRegionAccessPointStatus_INCONSISTENT_ACROSS_REGIONS MultiRegionAccessPointStatus = "INCONSISTENT_ACROSS_REGIONS"
 	MultiRegionAccessPointStatus_CREATING                    MultiRegionAccessPointStatus = "CREATING"
+	MultiRegionAccessPointStatus_DELETING                    MultiRegionAccessPointStatus = "DELETING"
+	MultiRegionAccessPointStatus_INCONSISTENT_ACROSS_REGIONS MultiRegionAccessPointStatus = "INCONSISTENT_ACROSS_REGIONS"
 	MultiRegionAccessPointStatus_PARTIALLY_CREATED           MultiRegionAccessPointStatus = "PARTIALLY_CREATED"
 	MultiRegionAccessPointStatus_PARTIALLY_DELETED           MultiRegionAccessPointStatus = "PARTIALLY_DELETED"
-	MultiRegionAccessPointStatus_DELETING                    MultiRegionAccessPointStatus = "DELETING"
+	MultiRegionAccessPointStatus_READY                       MultiRegionAccessPointStatus = "READY"
 )
 
 type NetworkOrigin string
@@ -193,10 +193,10 @@ const (
 type ObjectLambdaAllowedFeature string
 
 const (
-	ObjectLambdaAllowedFeature_GetObject_Range       ObjectLambdaAllowedFeature = "GetObject-Range"
 	ObjectLambdaAllowedFeature_GetObject_PartNumber  ObjectLambdaAllowedFeature = "GetObject-PartNumber"
-	ObjectLambdaAllowedFeature_HeadObject_Range      ObjectLambdaAllowedFeature = "HeadObject-Range"
+	ObjectLambdaAllowedFeature_GetObject_Range       ObjectLambdaAllowedFeature = "GetObject-Range"
 	ObjectLambdaAllowedFeature_HeadObject_PartNumber ObjectLambdaAllowedFeature = "HeadObject-PartNumber"
+	ObjectLambdaAllowedFeature_HeadObject_Range      ObjectLambdaAllowedFeature = "HeadObject-Range"
 )
 
 type ObjectLambdaTransformationConfigurationAction string
@@ -212,13 +212,13 @@ type OperationName string
 
 const (
 	OperationName_LambdaInvoke            OperationName = "LambdaInvoke"
-	OperationName_S3PutObjectCopy         OperationName = "S3PutObjectCopy"
-	OperationName_S3PutObjectAcl          OperationName = "S3PutObjectAcl"
-	OperationName_S3PutObjectTagging      OperationName = "S3PutObjectTagging"
 	OperationName_S3DeleteObjectTagging   OperationName = "S3DeleteObjectTagging"
 	OperationName_S3InitiateRestoreObject OperationName = "S3InitiateRestoreObject"
+	OperationName_S3PutObjectAcl          OperationName = "S3PutObjectAcl"
+	OperationName_S3PutObjectCopy         OperationName = "S3PutObjectCopy"
 	OperationName_S3PutObjectLegalHold    OperationName = "S3PutObjectLegalHold"
 	OperationName_S3PutObjectRetention    OperationName = "S3PutObjectRetention"
+	OperationName_S3PutObjectTagging      OperationName = "S3PutObjectTagging"
 	OperationName_S3ReplicateObject       OperationName = "S3ReplicateObject"
 )
 
@@ -238,29 +238,29 @@ type Permission string
 
 const (
 	Permission_READ      Permission = "READ"
-	Permission_WRITE     Permission = "WRITE"
 	Permission_READWRITE Permission = "READWRITE"
+	Permission_WRITE     Permission = "WRITE"
 )
 
 type Privilege string
 
 const (
-	Privilege_Minimal Privilege = "Minimal"
 	Privilege_Default Privilege = "Default"
+	Privilege_Minimal Privilege = "Minimal"
 )
 
 type ReplicaModificationsStatus string
 
 const (
-	ReplicaModificationsStatus_Enabled  ReplicaModificationsStatus = "Enabled"
 	ReplicaModificationsStatus_Disabled ReplicaModificationsStatus = "Disabled"
+	ReplicaModificationsStatus_Enabled  ReplicaModificationsStatus = "Enabled"
 )
 
 type ReplicationRuleStatus string
 
 const (
-	ReplicationRuleStatus_Enabled  ReplicationRuleStatus = "Enabled"
 	ReplicationRuleStatus_Disabled ReplicationRuleStatus = "Disabled"
+	ReplicationRuleStatus_Enabled  ReplicationRuleStatus = "Enabled"
 )
 
 type ReplicationStatus string
@@ -268,29 +268,29 @@ type ReplicationStatus string
 const (
 	ReplicationStatus_COMPLETED ReplicationStatus = "COMPLETED"
 	ReplicationStatus_FAILED    ReplicationStatus = "FAILED"
-	ReplicationStatus_REPLICA   ReplicationStatus = "REPLICA"
 	ReplicationStatus_NONE      ReplicationStatus = "NONE"
+	ReplicationStatus_REPLICA   ReplicationStatus = "REPLICA"
 )
 
 type ReplicationStorageClass string
 
 const (
-	ReplicationStorageClass_STANDARD            ReplicationStorageClass = "STANDARD"
-	ReplicationStorageClass_REDUCED_REDUNDANCY  ReplicationStorageClass = "REDUCED_REDUNDANCY"
-	ReplicationStorageClass_STANDARD_IA         ReplicationStorageClass = "STANDARD_IA"
-	ReplicationStorageClass_ONEZONE_IA          ReplicationStorageClass = "ONEZONE_IA"
-	ReplicationStorageClass_INTELLIGENT_TIERING ReplicationStorageClass = "INTELLIGENT_TIERING"
-	ReplicationStorageClass_GLACIER             ReplicationStorageClass = "GLACIER"
 	ReplicationStorageClass_DEEP_ARCHIVE        ReplicationStorageClass = "DEEP_ARCHIVE"
-	ReplicationStorageClass_OUTPOSTS            ReplicationStorageClass = "OUTPOSTS"
+	ReplicationStorageClass_GLACIER             ReplicationStorageClass = "GLACIER"
 	ReplicationStorageClass_GLACIER_IR          ReplicationStorageClass = "GLACIER_IR"
+	ReplicationStorageClass_INTELLIGENT_TIERING ReplicationStorageClass = "INTELLIGENT_TIERING"
+	ReplicationStorageClass_ONEZONE_IA          ReplicationStorageClass = "ONEZONE_IA"
+	ReplicationStorageClass_OUTPOSTS            ReplicationStorageClass = "OUTPOSTS"
+	ReplicationStorageClass_REDUCED_REDUNDANCY  ReplicationStorageClass = "REDUCED_REDUNDANCY"
+	ReplicationStorageClass_STANDARD            ReplicationStorageClass = "STANDARD"
+	ReplicationStorageClass_STANDARD_IA         ReplicationStorageClass = "STANDARD_IA"
 )
 
 type ReplicationTimeStatus string
 
 const (
-	ReplicationTimeStatus_Enabled  ReplicationTimeStatus = "Enabled"
 	ReplicationTimeStatus_Disabled ReplicationTimeStatus = "Disabled"
+	ReplicationTimeStatus_Enabled  ReplicationTimeStatus = "Enabled"
 )
 
 type RequestedJobStatus string
@@ -303,13 +303,13 @@ const (
 type S3CannedAccessControlList string
 
 const (
+	S3CannedAccessControlList_authenticated_read        S3CannedAccessControlList = "authenticated-read"
+	S3CannedAccessControlList_aws_exec_read             S3CannedAccessControlList = "aws-exec-read"
+	S3CannedAccessControlList_bucket_owner_full_control S3CannedAccessControlList = "bucket-owner-full-control"
+	S3CannedAccessControlList_bucket_owner_read         S3CannedAccessControlList = "bucket-owner-read"
 	S3CannedAccessControlList_private                   S3CannedAccessControlList = "private"
 	S3CannedAccessControlList_public_read               S3CannedAccessControlList = "public-read"
 	S3CannedAccessControlList_public_read_write         S3CannedAccessControlList = "public-read-write"
-	S3CannedAccessControlList_aws_exec_read             S3CannedAccessControlList = "aws-exec-read"
-	S3CannedAccessControlList_authenticated_read        S3CannedAccessControlList = "authenticated-read"
-	S3CannedAccessControlList_bucket_owner_read         S3CannedAccessControlList = "bucket-owner-read"
-	S3CannedAccessControlList_bucket_owner_full_control S3CannedAccessControlList = "bucket-owner-full-control"
 )
 
 type S3ChecksumAlgorithm string
@@ -331,8 +331,8 @@ const (
 type S3GranteeTypeIdentifier string
 
 const (
-	S3GranteeTypeIdentifier_id           S3GranteeTypeIdentifier = "id"
 	S3GranteeTypeIdentifier_emailAddress S3GranteeTypeIdentifier = "emailAddress"
+	S3GranteeTypeIdentifier_id           S3GranteeTypeIdentifier = "id"
 	S3GranteeTypeIdentifier_uri          S3GranteeTypeIdentifier = "uri"
 )
 
@@ -369,8 +369,8 @@ type S3Permission string
 const (
 	S3Permission_FULL_CONTROL S3Permission = "FULL_CONTROL"
 	S3Permission_READ         S3Permission = "READ"
-	S3Permission_WRITE        S3Permission = "WRITE"
 	S3Permission_READ_ACP     S3Permission = "READ_ACP"
+	S3Permission_WRITE        S3Permission = "WRITE"
 	S3Permission_WRITE_ACP    S3Permission = "WRITE_ACP"
 )
 
@@ -390,28 +390,28 @@ const (
 type S3StorageClass string
 
 const (
+	S3StorageClass_DEEP_ARCHIVE        S3StorageClass = "DEEP_ARCHIVE"
+	S3StorageClass_GLACIER             S3StorageClass = "GLACIER"
+	S3StorageClass_GLACIER_IR          S3StorageClass = "GLACIER_IR"
+	S3StorageClass_INTELLIGENT_TIERING S3StorageClass = "INTELLIGENT_TIERING"
+	S3StorageClass_ONEZONE_IA          S3StorageClass = "ONEZONE_IA"
 	S3StorageClass_STANDARD            S3StorageClass = "STANDARD"
 	S3StorageClass_STANDARD_IA         S3StorageClass = "STANDARD_IA"
-	S3StorageClass_ONEZONE_IA          S3StorageClass = "ONEZONE_IA"
-	S3StorageClass_GLACIER             S3StorageClass = "GLACIER"
-	S3StorageClass_INTELLIGENT_TIERING S3StorageClass = "INTELLIGENT_TIERING"
-	S3StorageClass_DEEP_ARCHIVE        S3StorageClass = "DEEP_ARCHIVE"
-	S3StorageClass_GLACIER_IR          S3StorageClass = "GLACIER_IR"
 )
 
 type SSEKMSEncryptedObjectsStatus string
 
 const (
-	SSEKMSEncryptedObjectsStatus_Enabled  SSEKMSEncryptedObjectsStatus = "Enabled"
 	SSEKMSEncryptedObjectsStatus_Disabled SSEKMSEncryptedObjectsStatus = "Disabled"
+	SSEKMSEncryptedObjectsStatus_Enabled  SSEKMSEncryptedObjectsStatus = "Enabled"
 )
 
 type TransitionStorageClass string
 
 const (
-	TransitionStorageClass_GLACIER             TransitionStorageClass = "GLACIER"
-	TransitionStorageClass_STANDARD_IA         TransitionStorageClass = "STANDARD_IA"
-	TransitionStorageClass_ONEZONE_IA          TransitionStorageClass = "ONEZONE_IA"
-	TransitionStorageClass_INTELLIGENT_TIERING TransitionStorageClass = "INTELLIGENT_TIERING"
 	TransitionStorageClass_DEEP_ARCHIVE        TransitionStorageClass = "DEEP_ARCHIVE"
+	TransitionStorageClass_GLACIER             TransitionStorageClass = "GLACIER"
+	TransitionStorageClass_INTELLIGENT_TIERING TransitionStorageClass = "INTELLIGENT_TIERING"
+	TransitionStorageClass_ONEZONE_IA          TransitionStorageClass = "ONEZONE_IA"
+	TransitionStorageClass_STANDARD_IA         TransitionStorageClass = "STANDARD_IA"
 )

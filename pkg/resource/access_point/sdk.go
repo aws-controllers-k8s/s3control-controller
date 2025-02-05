@@ -28,8 +28,10 @@ import (
 	ackerr "github.com/aws-controllers-k8s/runtime/pkg/errors"
 	ackrequeue "github.com/aws-controllers-k8s/runtime/pkg/requeue"
 	ackrtlog "github.com/aws-controllers-k8s/runtime/pkg/runtime/log"
-	"github.com/aws/aws-sdk-go/aws"
-	svcsdk "github.com/aws/aws-sdk-go/service/s3control"
+	"github.com/aws/aws-sdk-go-v2/aws"
+	svcsdk "github.com/aws/aws-sdk-go-v2/service/s3control"
+	svcsdktypes "github.com/aws/aws-sdk-go-v2/service/s3control/types"
+	smithy "github.com/aws/smithy-go"
 	corev1 "k8s.io/api/core/v1"
 	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 
@@ -40,8 +42,7 @@ import (
 var (
 	_ = &metav1.Time{}
 	_ = strings.ToLower("")
-	_ = &aws.JSONValue{}
-	_ = &svcsdk.S3Control{}
+	_ = &svcsdk.Client{}
 	_ = &svcapitypes.AccessPoint{}
 	_ = ackv1alpha1.AWSAccountID("")
 	_ = &ackerr.NotFound
@@ -49,6 +50,7 @@ var (
 	_ = &reflect.Value{}
 	_ = fmt.Sprintf("")
 	_ = &ackrequeue.NoRequeue{}
+	_ = &aws.Config{}
 )
 
 // sdkFind returns SDK-specific information about a supplied resource
@@ -74,13 +76,11 @@ func (rm *resourceManager) sdkFind(
 	}
 
 	var resp *svcsdk.GetAccessPointOutput
-	resp, err = rm.sdkapi.GetAccessPointWithContext(ctx, input)
+	resp, err = rm.sdkapi.GetAccessPoint(ctx, input)
 	rm.metrics.RecordAPICall("READ_ONE", "GetAccessPoint", err)
 	if err != nil {
-		if reqErr, ok := ackerr.AWSRequestFailure(err); ok && reqErr.StatusCode() == 404 {
-			return nil, ackerr.NotFound
-		}
-		if awsErr, ok := ackerr.AWSError(err); ok && awsErr.Code() == "UNKNOWN" {
+		var awsErr smithy.APIError
+		if errors.As(err, &awsErr) && awsErr.ErrorCode() == "NoSuchAccessPoint" {
 			return nil, ackerr.NotFound
 		}
 		return nil, err
@@ -167,10 +167,10 @@ func (rm *resourceManager) newDescribeRequestPayload(
 	res := &svcsdk.GetAccessPointInput{}
 
 	if r.ko.Spec.AccountID != nil {
-		res.SetAccountId(*r.ko.Spec.AccountID)
+		res.AccountId = r.ko.Spec.AccountID
 	}
 	if r.ko.Spec.Name != nil {
-		res.SetName(*r.ko.Spec.Name)
+		res.Name = r.ko.Spec.Name
 	}
 
 	return res, nil
@@ -195,7 +195,7 @@ func (rm *resourceManager) sdkCreate(
 
 	var resp *svcsdk.CreateAccessPointOutput
 	_ = resp
-	resp, err = rm.sdkapi.CreateAccessPointWithContext(ctx, input)
+	resp, err = rm.sdkapi.CreateAccessPoint(ctx, input)
 	rm.metrics.RecordAPICall("CREATE", "CreateAccessPoint", err)
 	if err != nil {
 		return nil, err
@@ -230,39 +230,39 @@ func (rm *resourceManager) newCreateRequestPayload(
 	res := &svcsdk.CreateAccessPointInput{}
 
 	if r.ko.Spec.AccountID != nil {
-		res.SetAccountId(*r.ko.Spec.AccountID)
+		res.AccountId = r.ko.Spec.AccountID
 	}
 	if r.ko.Spec.Bucket != nil {
-		res.SetBucket(*r.ko.Spec.Bucket)
+		res.Bucket = r.ko.Spec.Bucket
 	}
 	if r.ko.Spec.BucketAccountID != nil {
-		res.SetBucketAccountId(*r.ko.Spec.BucketAccountID)
+		res.BucketAccountId = r.ko.Spec.BucketAccountID
 	}
 	if r.ko.Spec.Name != nil {
-		res.SetName(*r.ko.Spec.Name)
+		res.Name = r.ko.Spec.Name
 	}
 	if r.ko.Spec.PublicAccessBlockConfiguration != nil {
-		f4 := &svcsdk.PublicAccessBlockConfiguration{}
+		f4 := &svcsdktypes.PublicAccessBlockConfiguration{}
 		if r.ko.Spec.PublicAccessBlockConfiguration.BlockPublicACLs != nil {
-			f4.SetBlockPublicAcls(*r.ko.Spec.PublicAccessBlockConfiguration.BlockPublicACLs)
+			f4.BlockPublicAcls = r.ko.Spec.PublicAccessBlockConfiguration.BlockPublicACLs
 		}
 		if r.ko.Spec.PublicAccessBlockConfiguration.BlockPublicPolicy != nil {
-			f4.SetBlockPublicPolicy(*r.ko.Spec.PublicAccessBlockConfiguration.BlockPublicPolicy)
+			f4.BlockPublicPolicy = r.ko.Spec.PublicAccessBlockConfiguration.BlockPublicPolicy
 		}
 		if r.ko.Spec.PublicAccessBlockConfiguration.IgnorePublicACLs != nil {
-			f4.SetIgnorePublicAcls(*r.ko.Spec.PublicAccessBlockConfiguration.IgnorePublicACLs)
+			f4.IgnorePublicAcls = r.ko.Spec.PublicAccessBlockConfiguration.IgnorePublicACLs
 		}
 		if r.ko.Spec.PublicAccessBlockConfiguration.RestrictPublicBuckets != nil {
-			f4.SetRestrictPublicBuckets(*r.ko.Spec.PublicAccessBlockConfiguration.RestrictPublicBuckets)
+			f4.RestrictPublicBuckets = r.ko.Spec.PublicAccessBlockConfiguration.RestrictPublicBuckets
 		}
-		res.SetPublicAccessBlockConfiguration(f4)
+		res.PublicAccessBlockConfiguration = f4
 	}
 	if r.ko.Spec.VPCConfiguration != nil {
-		f5 := &svcsdk.VpcConfiguration{}
+		f5 := &svcsdktypes.VpcConfiguration{}
 		if r.ko.Spec.VPCConfiguration.VPCID != nil {
-			f5.SetVpcId(*r.ko.Spec.VPCConfiguration.VPCID)
+			f5.VpcId = r.ko.Spec.VPCConfiguration.VPCID
 		}
-		res.SetVpcConfiguration(f5)
+		res.VpcConfiguration = f5
 	}
 
 	return res, nil
@@ -295,7 +295,7 @@ func (rm *resourceManager) sdkDelete(
 	}
 	var resp *svcsdk.DeleteAccessPointOutput
 	_ = resp
-	resp, err = rm.sdkapi.DeleteAccessPointWithContext(ctx, input)
+	resp, err = rm.sdkapi.DeleteAccessPoint(ctx, input)
 	rm.metrics.RecordAPICall("DELETE", "DeleteAccessPoint", err)
 	return nil, err
 }
@@ -308,10 +308,10 @@ func (rm *resourceManager) newDeleteRequestPayload(
 	res := &svcsdk.DeleteAccessPointInput{}
 
 	if r.ko.Spec.AccountID != nil {
-		res.SetAccountId(*r.ko.Spec.AccountID)
+		res.AccountId = r.ko.Spec.AccountID
 	}
 	if r.ko.Spec.Name != nil {
-		res.SetName(*r.ko.Spec.Name)
+		res.Name = r.ko.Spec.Name
 	}
 
 	return res, nil
