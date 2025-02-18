@@ -5,7 +5,7 @@ go 1.22.0
 toolchain go1.23.2
 
 require (
-	github.com/aws-controllers-k8s/runtime v0.42.0
+	github.com/aws-controllers-k8s/runtime v0.43.0
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/aws/aws-sdk-go-v2 v1.34.0
 	github.com/aws/aws-sdk-go-v2/service/s3control v1.52.7
