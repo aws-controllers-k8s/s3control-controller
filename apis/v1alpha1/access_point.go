@@ -27,7 +27,9 @@ type AccessPointSpec struct {
 
 	// The Amazon Web Services account ID for the account that owns the specified
 	// access point.
+
 	// +kubebuilder:validation:Required
+
 	AccountID *string `json:"accountID"`
 	// The name of the bucket that you want to associate this access point with.
 	//
@@ -40,7 +42,9 @@ type AccessPointSpec struct {
 	// reports through Outpost my-outpost owned by account 123456789012 in Region
 	// us-west-2, use the URL encoding of arn:aws:s3-outposts:us-west-2:123456789012:outpost/my-outpost/bucket/reports.
 	// The value must be URL encoded.
+
 	// +kubebuilder:validation:Required
+
 	Bucket *string `json:"bucket"`
 	// The Amazon Web Services account ID associated with the S3 bucket associated
 	// with this access point.
@@ -49,17 +53,22 @@ type AccessPointSpec struct {
 	// the same account owner, the BucketAccountId is not required. For cross-account
 	// access point when your bucket and access point are not in the same account,
 	// the BucketAccountId is required.
+
 	BucketAccountID *string `json:"bucketAccountID,omitempty"`
 	// The name you want to assign to this access point.
+
 	// +kubebuilder:validation:Required
+
 	Name *string `json:"name"`
 	// The PublicAccessBlock configuration that you want to apply to the access
 	// point.
+
 	PublicAccessBlockConfiguration *PublicAccessBlockConfiguration `json:"publicAccessBlockConfiguration,omitempty"`
 	// If you include this field, Amazon S3 restricts access to this access point
 	// to requests from the specified virtual private cloud (VPC).
 	//
 	// This is required for creating an access point for Amazon S3 on Outposts buckets.
+
 	VPCConfiguration *VPCConfiguration `json:"vpcConfiguration,omitempty"`
 }
 
@@ -70,7 +79,7 @@ type AccessPointStatus struct {
 	// constructed ARN for the resource
 	// +kubebuilder:validation:Optional
 	ACKResourceMetadata *ackv1alpha1.ResourceMetadata `json:"ackResourceMetadata"`
-	// All CRS managed by ACK have a common `Status.Conditions` member that
+	// All CRs managed by ACK have a common `Status.Conditions` member that
 	// contains a collection of `ackv1alpha1.Condition` objects that describe
 	// the various terminal states of the CR and its backend AWS service API
 	// resource
