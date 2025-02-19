@@ -43,41 +43,22 @@ spec:
               An access point used to access a bucket.
             properties:
               accountID:
-                description: |-
-                  The Amazon Web Services account ID for the account that owns the specified
-                  access point.
                 type: string
               bucket:
-                description: |-
-                  The name of the bucket that you want to associate this access point with.
-
-                  For using this parameter with Amazon S3 on Outposts with the REST API, you
-                  must specify the name and the x-amz-outpost-id as well.
-
-                  For using this parameter with S3 on Outposts with the Amazon Web Services
-                  SDK and CLI, you must specify the ARN of the bucket accessed in the format
-                  arn:aws:s3-outposts:::outpost//bucket/. For example, to access the bucket
-                  reports through Outpost my-outpost owned by account 123456789012 in Region
-                  us-west-2, use the URL encoding of arn:aws:s3-outposts:us-west-2:123456789012:outpost/my-outpost/bucket/reports.
-                  The value must be URL encoded.
                 type: string
               bucketAccountID:
-                description: |-
-                  The Amazon Web Services account ID associated with the S3 bucket associated
-                  with this access point.
-
-                  For same account access point when your bucket and access point belong to
-                  the same account owner, the BucketAccountId is not required. For cross-account
-                  access point when your bucket and access point are not in the same account,
-                  the BucketAccountId is required.
                 type: string
               name:
-                description: The name you want to assign to this access point.
                 type: string
               publicAccessBlockConfiguration:
                 description: |-
-                  The PublicAccessBlock configuration that you want to apply to the access
-                  point.
+                  The PublicAccessBlock configuration that you want to apply to this Amazon
+                  S3 account. You can enable the configuration options in any combination.
+                  For more information about when Amazon S3 considers a bucket or object public,
+                  see The Meaning of "Public" (https://docs.aws.amazon.com/AmazonS3/latest/dev/access-control-block-public-access.html#access-control-block-public-access-policy-status)
+                  in the Amazon S3 User Guide.
+
+                  This data type is not supported for Amazon S3 on Outposts.
                 properties:
                   blockPublicACLs:
                     type: boolean
@@ -89,11 +70,8 @@ spec:
                     type: boolean
                 type: object
               vpcConfiguration:
-                description: |-
-                  If you include this field, Amazon S3 restricts access to this access point
-                  to requests from the specified virtual private cloud (VPC).
-
-                  This is required for creating an access point for Amazon S3 on Outposts buckets.
+                description: The virtual private cloud (VPC) configuration for an
+                  access point.
                 properties:
                   vpcID:
                     type: string
@@ -140,7 +118,7 @@ spec:
                 type: string
               conditions:
                 description: |-
-                  All CRS managed by ACK have a common `Status.Conditions` member that
+                  All CRs managed by ACK have a common `Status.Conditions` member that
                   contains a collection of `ackv1alpha1.Condition` objects that describe
                   the various terminal states of the CR and its backend AWS service API
                   resource
