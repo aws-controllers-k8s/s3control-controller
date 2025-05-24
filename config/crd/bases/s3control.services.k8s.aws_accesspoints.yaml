@@ -46,6 +46,8 @@ spec:
                 description: |-
                   The Amazon Web Services account ID for the account that owns the specified
                   access point.
+
+                  Regex Pattern: `^\d{12}$`
                 type: string
               bucket:
                 description: |-
@@ -70,6 +72,8 @@ spec:
                   the same account owner, the BucketAccountId is not required. For cross-account
                   access point when your bucket and access point are not in the same account,
                   the BucketAccountId is required.
+
+                  Regex Pattern: `^\d{12}$`
                 type: string
               name:
                 description: The name you want to assign to this access point.
@@ -136,7 +140,10 @@ spec:
                 - region
                 type: object
               alias:
-                description: The name or alias of the access point.
+                description: |-
+                  The name or alias of the access point.
+
+                  Regex Pattern: `^[0-9a-z\\-]{63}$`
                 type: string
               conditions:
                 description: |-
