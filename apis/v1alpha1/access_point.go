@@ -27,6 +27,8 @@ type AccessPointSpec struct {
 
 	// The Amazon Web Services account ID for the account that owns the specified
 	// access point.
+	//
+	// Regex Pattern: `^\d{12}$`
 	// +kubebuilder:validation:Required
 	AccountID *string `json:"accountID"`
 	// The name of the bucket that you want to associate this access point with.
@@ -49,6 +51,8 @@ type AccessPointSpec struct {
 	// the same account owner, the BucketAccountId is not required. For cross-account
 	// access point when your bucket and access point are not in the same account,
 	// the BucketAccountId is required.
+	//
+	// Regex Pattern: `^\d{12}$`
 	BucketAccountID *string `json:"bucketAccountID,omitempty"`
 	// The name you want to assign to this access point.
 	// +kubebuilder:validation:Required
@@ -77,6 +81,8 @@ type AccessPointStatus struct {
 	// +kubebuilder:validation:Optional
 	Conditions []*ackv1alpha1.Condition `json:"conditions"`
 	// The name or alias of the access point.
+	//
+	// Regex Pattern: `^[0-9a-z\\-]{63}$`
 	// +kubebuilder:validation:Optional
 	Alias *string `json:"alias,omitempty"`
 }
