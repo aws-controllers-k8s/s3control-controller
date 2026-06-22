@@ -3,7 +3,7 @@ module github.com/aws-controllers-k8s/s3control-controller
 go 1.25.0
 
 require (
-	github.com/aws-controllers-k8s/runtime v0.59.1
+	github.com/aws-controllers-k8s/runtime v0.60.0
 	github.com/aws/aws-sdk-go v1.55.5
 	github.com/aws/aws-sdk-go-v2 v1.34.0
 	github.com/aws/aws-sdk-go-v2/service/s3control v1.52.7
