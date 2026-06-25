@@ -70,6 +70,14 @@ rules:
   - list
   - watch
 - apiGroups:
+  - s3.services.k8s.aws
+  resources:
+  - buckets
+  - buckets/status
+  verbs:
+  - get
+  - list
+- apiGroups:
   - s3control.services.k8s.aws
   resources:
   - accesspoints

@@ -101,6 +101,11 @@ func (in *AccessPointSpec) DeepCopyInto(out *AccessPointSpec) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.BucketRef != nil {
+		in, out := &in.BucketRef, &out.BucketRef
+		*out = new(corev1alpha1.AWSResourceReferenceWrapper)
+		(*in).DeepCopyInto(*out)
+	}
 	if in.Name != nil {
 		in, out := &in.Name, &out.Name
 		*out = new(string)

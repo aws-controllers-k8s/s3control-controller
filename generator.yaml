@@ -11,6 +11,12 @@ ignore:
     - StorageLensGroup
 resources:
   AccessPoint:
+    fields:
+      Bucket:
+        references:
+          resource: Bucket
+          service_name: s3
+          path: Spec.Name
     exceptions:
       errors:
         404:

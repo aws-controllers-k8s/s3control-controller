@@ -75,6 +75,23 @@ spec:
 
                   Regex Pattern: `^\d{12}$`
                 type: string
+              bucketRef:
+                description: "AWSResourceReferenceWrapper provides a wrapper around
+                  *AWSResourceReference\ntype to provide more user friendly syntax
+                  for references using 'from' field\nEx:\nAPIIDRef:\n\n\tfrom:\n\t
+                  \ name: my-api"
+                properties:
+                  from:
+                    description: |-
+                      AWSResourceReference provides all the values necessary to reference another
+                      k8s resource for finding the identifier(Id/ARN/Name)
+                    properties:
+                      name:
+                        type: string
+                      namespace:
+                        type: string
+                    type: object
+                type: object
               name:
                 description: The name you want to assign to this access point.
                 type: string
@@ -104,7 +121,6 @@ spec:
                 type: object
             required:
             - accountID
-            - bucket
             - name
             type: object
           status:
