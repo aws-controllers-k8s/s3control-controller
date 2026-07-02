@@ -17,5 +17,22 @@ resources:
           code: NoSuchAccessPoint
     tags:
       ignore: true
+    fields:
+      Policy:
+        type: "*string"
+        is_secret: false
+        compare:
+          is_ignored: true
+    hooks:
+      sdk_read_one_post_set_output:
+        template_path: hooks/access_point/sdk_read_one_post_set_output.go.tpl
+      sdk_create_post_set_output:
+        template_path: hooks/access_point/sdk_create_post_set_output.go.tpl
+      sdk_update_pre_build_request:
+        template_path: hooks/access_point/sdk_update_pre_build_request.go.tpl
+      delta_pre_compare:
+        template_path: hooks/access_point/delta_pre_compare.go.tpl
+    update_operation:
+      custom_method_name: customUpdate
 sdk_names:
   model_name: s3-control

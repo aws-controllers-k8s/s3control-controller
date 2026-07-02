@@ -56,7 +56,8 @@ type AccessPointSpec struct {
 	BucketAccountID *string `json:"bucketAccountID,omitempty"`
 	// The name you want to assign to this access point.
 	// +kubebuilder:validation:Required
-	Name *string `json:"name"`
+	Name   *string `json:"name"`
+	Policy *string `json:"policy,omitempty"`
 	// The PublicAccessBlock configuration that you want to apply to the access
 	// point.
 	PublicAccessBlockConfiguration *PublicAccessBlockConfiguration `json:"publicAccessBlockConfiguration,omitempty"`

@@ -78,6 +78,8 @@ spec:
               name:
                 description: The name you want to assign to this access point.
                 type: string
+              policy:
+                type: string
               publicAccessBlockConfiguration:
                 description: |-
                   The PublicAccessBlock configuration that you want to apply to the access

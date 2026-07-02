@@ -40,6 +40,14 @@ func newResourceDelta(
 		delta.Add("", a, b)
 		return delta
 	}
+	if ackcompare.IsNotNil(a.ko.Spec.Policy) && ackcompare.IsNotNil(b.ko.Spec.Policy) {
+		equal, err := ackcompare.IAMPolicyDocumentEqual(*a.ko.Spec.Policy, *b.ko.Spec.Policy)
+		if err != nil || !equal {
+			delta.Add("Spec.Policy", a.ko.Spec.Policy, b.ko.Spec.Policy)
+		}
+	} else if ackcompare.IsNotNil(a.ko.Spec.Policy) != ackcompare.IsNotNil(b.ko.Spec.Policy) {
+		delta.Add("Spec.Policy", a.ko.Spec.Policy, b.ko.Spec.Policy)
+	}
 
 	if ackcompare.HasNilDifference(a.ko.Spec.AccountID, b.ko.Spec.AccountID) {
 		delta.Add("Spec.AccountID", a.ko.Spec.AccountID, b.ko.Spec.AccountID)

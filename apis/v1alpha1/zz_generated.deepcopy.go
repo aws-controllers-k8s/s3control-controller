@@ -106,6 +106,11 @@ func (in *AccessPointSpec) DeepCopyInto(out *AccessPointSpec) {
 		*out = new(string)
 		**out = **in
 	}
+	if in.Policy != nil {
+		in, out := &in.Policy, &out.Policy
+		*out = new(string)
+		**out = **in
+	}
 	if in.PublicAccessBlockConfiguration != nil {
 		in, out := &in.PublicAccessBlockConfiguration, &out.PublicAccessBlockConfiguration
 		*out = new(PublicAccessBlockConfiguration)
