@@ -152,6 +152,7 @@ func (rm *resourceManager) sdkFind(
 			Name:      r.ko.Spec.Name,
 		}
 		policyResp, policyErr := rm.sdkapi.GetAccessPointPolicy(ctx, policyInput)
+		rm.metrics.RecordAPICall("READ_ONE", "GetAccessPointPolicy", policyErr)
 		if policyErr != nil {
 			var awsErr smithy.APIError
 			if errors.As(policyErr, &awsErr) && awsErr.ErrorCode() == "NoSuchAccessPointPolicy" {
@@ -236,13 +237,14 @@ func (rm *resourceManager) sdkCreate(
 	}
 
 	rm.setStatusDefaults(ko)
-	if desired.ko.Spec.Policy != nil && *desired.ko.Spec.Policy != "" {
+	if desired.ko.Spec.Policy != nil {
 		policyInput := &svcsdk.PutAccessPointPolicyInput{
 			AccountId: desired.ko.Spec.AccountID,
 			Name:      desired.ko.Spec.Name,
 			Policy:    desired.ko.Spec.Policy,
 		}
 		_, err = rm.sdkapi.PutAccessPointPolicy(ctx, policyInput)
+		rm.metrics.RecordAPICall("UPDATE", "PutAccessPointPolicy", err)
 		if err != nil {
 			return nil, err
 		}

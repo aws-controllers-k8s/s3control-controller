@@ -33,13 +33,14 @@ func (rm *resourceManager) customUpdate(
 	delta *ackcompare.Delta,
 ) (updated *resource, err error) {
 	if delta.DifferentAt("Spec.Policy") {
-		if desired.ko.Spec.Policy != nil && *desired.ko.Spec.Policy != "" {
+		if desired.ko.Spec.Policy != nil {
 			policyInput := &svcsdk.PutAccessPointPolicyInput{
 				AccountId: desired.ko.Spec.AccountID,
 				Name:      desired.ko.Spec.Name,
 				Policy:    desired.ko.Spec.Policy,
 			}
 			_, err = rm.sdkapi.PutAccessPointPolicy(ctx, policyInput)
+			rm.metrics.RecordAPICall("UPDATE", "PutAccessPointPolicy", err)
 			if err != nil {
 				return nil, err
 			}
@@ -49,6 +50,7 @@ func (rm *resourceManager) customUpdate(
 				Name:      desired.ko.Spec.Name,
 			}
 			_, err = rm.sdkapi.DeleteAccessPointPolicy(ctx, deleteInput)
+			rm.metrics.RecordAPICall("UPDATE", "DeleteAccessPointPolicy", err)
 			if err != nil {
 				var awsErr smithy.APIError
 				if !errors.As(err, &awsErr) || awsErr.ErrorCode() != "NoSuchAccessPointPolicy" {
