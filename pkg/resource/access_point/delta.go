@@ -35,18 +35,10 @@ func newResourceDelta(
 	b *resource,
 ) *ackcompare.Delta {
 	delta := ackcompare.NewDelta()
-	if (a == nil && b != nil) ||
-		(a != nil && b == nil) {
+	if ((a == nil && b != nil) ||
+			(a != nil && b == nil)) {
 		delta.Add("", a, b)
 		return delta
-	}
-	if ackcompare.IsNotNil(a.ko.Spec.Policy) && ackcompare.IsNotNil(b.ko.Spec.Policy) {
-		equal, err := ackcompare.IAMPolicyDocumentEqual(*a.ko.Spec.Policy, *b.ko.Spec.Policy)
-		if err != nil || !equal {
-			delta.Add("Spec.Policy", a.ko.Spec.Policy, b.ko.Spec.Policy)
-		}
-	} else if ackcompare.IsNotNil(a.ko.Spec.Policy) != ackcompare.IsNotNil(b.ko.Spec.Policy) {
-		delta.Add("Spec.Policy", a.ko.Spec.Policy, b.ko.Spec.Policy)
 	}
 
 	if ackcompare.HasNilDifference(a.ko.Spec.AccountID, b.ko.Spec.AccountID) {
@@ -75,6 +67,13 @@ func newResourceDelta(
 	} else if a.ko.Spec.Name != nil && b.ko.Spec.Name != nil {
 		if *a.ko.Spec.Name != *b.ko.Spec.Name {
 			delta.Add("Spec.Name", a.ko.Spec.Name, b.ko.Spec.Name)
+		}
+	}
+	if ackcompare.HasNilDifference(a.ko.Spec.Policy, b.ko.Spec.Policy) {
+		delta.Add("Spec.Policy", a.ko.Spec.Policy, b.ko.Spec.Policy)
+	} else if a.ko.Spec.Policy != nil && b.ko.Spec.Policy != nil {
+		if equal, err := ackcompare.IAMPolicyDocumentEqual(*a.ko.Spec.Policy, *b.ko.Spec.Policy); err != nil || !equal {
+			delta.Add("Spec.Policy", a.ko.Spec.Policy, b.ko.Spec.Policy)
 		}
 	}
 	if ackcompare.HasNilDifference(a.ko.Spec.PublicAccessBlockConfiguration, b.ko.Spec.PublicAccessBlockConfiguration) {
