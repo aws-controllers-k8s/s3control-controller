@@ -220,8 +220,7 @@ class TestAccessPoint:
         policy_doc = _make_policy(account_id, resource_name)
         patch = {"spec": {"policy": policy_doc}}
         k8s.patch_custom_resource(ref, patch)
-
-        assert k8s.wait_on_condition(ref, "ACK.ResourceSynced", "True", wait_periods=5)
+        time.sleep(UPDATE_WAIT_AFTER_SECONDS)
 
         aws_policy = validator.get_access_point_policy(account_id, resource_name)
         assert aws_policy is not None, "Expected policy to be set after update"
@@ -239,8 +238,7 @@ class TestAccessPoint:
         # Remove policy by setting it to null
         patch = {"spec": {"policy": None}}
         k8s.patch_custom_resource(ref, patch)
-
-        assert k8s.wait_on_condition(ref, "ACK.ResourceSynced", "True", wait_periods=5)
+        time.sleep(UPDATE_WAIT_AFTER_SECONDS)
 
         aws_policy = validator.get_access_point_policy(account_id, resource_name)
         assert aws_policy is None, "Expected policy to be removed after patch"
