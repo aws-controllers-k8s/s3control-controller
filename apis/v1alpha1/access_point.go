@@ -56,7 +56,11 @@ type AccessPointSpec struct {
 	BucketAccountID *string `json:"bucketAccountID,omitempty"`
 	// The name you want to assign to this access point.
 	// +kubebuilder:validation:Required
-	Name   *string `json:"name"`
+	Name *string `json:"name"`
+	// The policy that you want to apply to the specified access point. For more
+	// information about access point policies, see Managing data access with Amazon
+	// S3 access points (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points.html)
+	// in the Amazon S3 User Guide.
 	Policy *string `json:"policy,omitempty"`
 	// The PublicAccessBlock configuration that you want to apply to the access
 	// point.
