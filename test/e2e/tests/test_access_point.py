@@ -194,7 +194,7 @@ class TestAccessPoint:
         assert validator.access_point_exist(account_id, access_point_name)
 
     def test_create_with_policy(self, s3control_client, access_point_with_policy):
-        """TC-2: Create an access point with a policy and verify it is set in AWS."""
+        """Create an access point with a policy and verify it is set in AWS."""
         (ref, _, resource_name) = access_point_with_policy
         account_id = get_account_id()
 
@@ -206,7 +206,7 @@ class TestAccessPoint:
         assert aws_policy is not None, "Expected policy to be set in AWS"
 
     def test_update_policy(self, s3control_client, access_point_no_policy):
-        """TC-3: Create access point without policy, then patch to add one."""
+        """Create access point without policy, then patch to add one."""
         (ref, _, resource_name) = access_point_no_policy
         account_id = get_account_id()
 
@@ -226,7 +226,7 @@ class TestAccessPoint:
         assert aws_policy is not None, "Expected policy to be set after update"
 
     def test_delete_policy(self, s3control_client, access_point_with_policy):
-        """TC-4: Create access point with policy, then remove it via patch."""
+        """Create access point with policy, then remove it via patch."""
         (ref, _, resource_name) = access_point_with_policy
         account_id = get_account_id()
 
