@@ -152,6 +152,7 @@ func (rm *resourceManager) sdkFind(
 			Name:      r.ko.Spec.Name,
 		}
 		policyResp, policyErr := rm.sdkapi.GetAccessPointPolicy(ctx, policyInput)
+		rm.metrics.RecordAPICall("READ_ONE", "GetAccessPointPolicy", policyErr)
 		if policyErr != nil {
 			var awsErr smithy.APIError
 			if errors.As(policyErr, &awsErr) && awsErr.ErrorCode() == "NoSuchAccessPointPolicy" {
