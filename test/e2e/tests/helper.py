@@ -34,3 +34,13 @@ class S3ControlValidator:
     def access_point_exist(self, account_id: str, name: str) -> bool:
         return self.get_access_point(account_id, name) is not None
 
+    def get_access_point_policy(self, account_id: str, name: str):
+        try:
+            resp = self.s3control_client.get_access_point_policy(
+                AccountId=account_id,
+                Name=name,
+            )
+            return resp.get('Policy')
+        except Exception:
+            return None
+

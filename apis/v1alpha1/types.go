@@ -60,6 +60,16 @@ type Destination struct {
 	Account *string `json:"account,omitempty"`
 }
 
+// The last established access control policy for a Multi-Region Access Point.
+//
+// When you update the policy, the update is first listed as the proposed policy.
+// After the update is finished and all Regions have been updated, the proposed
+// policy is listed as the established policy. If both policies have the same
+// version number, the proposed policy is the established policy.
+type EstablishedMultiRegionAccessPointPolicy struct {
+	Policy *string `json:"policy,omitempty"`
+}
+
 // Contains the information required to locate a manifest object. Manifests
 // can't be imported from directory buckets. For more information, see Directory
 // buckets (https://docs.aws.amazon.com/AmazonS3/latest/userguide/directory-buckets-overview.html).
@@ -93,6 +103,16 @@ type MultiRegionAccessPointRoute struct {
 	Bucket *string `json:"bucket,omitempty"`
 }
 
+// The proposed access control policy for the Multi-Region Access Point.
+//
+// When you update the policy, the update is first listed as the proposed policy.
+// After the update is finished and all Regions have been updated, the proposed
+// policy is listed as the established policy. If both policies have the same
+// version number, the proposed policy is the established policy.
+type ProposedMultiRegionAccessPointPolicy struct {
+	Policy *string `json:"policy,omitempty"`
+}
+
 // The PublicAccessBlock configuration that you want to apply to this Amazon
 // S3 account. You can enable the configuration options in any combination.
 // For more information about when Amazon S3 considers a bucket or object public,
@@ -105,6 +125,13 @@ type PublicAccessBlockConfiguration struct {
 	BlockPublicPolicy     *bool `json:"blockPublicPolicy,omitempty"`
 	IgnorePublicACLs      *bool `json:"ignorePublicACLs,omitempty"`
 	RestrictPublicBuckets *bool `json:"restrictPublicBuckets,omitempty"`
+}
+
+// A container for the information associated with a PutMultiRegionAccessPoint
+// (https://docs.aws.amazon.com/AmazonS3/latest/API/API_control_PutMultiRegionAccessPoint.html)
+// request.
+type PutMultiRegionAccessPointPolicyInput struct {
+	Policy *string `json:"policy,omitempty"`
 }
 
 // A Region that supports a Multi-Region Access Point as well as the associated

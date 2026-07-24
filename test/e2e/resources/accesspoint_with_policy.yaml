@@ -8,3 +8,4 @@ spec:
   accountID: "$ACCOUNT_ID"
   publicAccessBlockConfiguration:
     blockPublicACLs: true
+  policy: '$POLICY_DOCUMENT'

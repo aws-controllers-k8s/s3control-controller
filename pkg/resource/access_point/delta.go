@@ -69,6 +69,13 @@ func newResourceDelta(
 			delta.Add("Spec.Name", a.ko.Spec.Name, b.ko.Spec.Name)
 		}
 	}
+	if ackcompare.HasNilDifference(a.ko.Spec.Policy, b.ko.Spec.Policy) {
+		delta.Add("Spec.Policy", a.ko.Spec.Policy, b.ko.Spec.Policy)
+	} else if a.ko.Spec.Policy != nil && b.ko.Spec.Policy != nil {
+		if equal, err := ackcompare.IAMPolicyDocumentEqual(*a.ko.Spec.Policy, *b.ko.Spec.Policy); err != nil || !equal {
+			delta.Add("Spec.Policy", a.ko.Spec.Policy, b.ko.Spec.Policy)
+		}
+	}
 	if ackcompare.HasNilDifference(a.ko.Spec.PublicAccessBlockConfiguration, b.ko.Spec.PublicAccessBlockConfiguration) {
 		delta.Add("Spec.PublicAccessBlockConfiguration", a.ko.Spec.PublicAccessBlockConfiguration, b.ko.Spec.PublicAccessBlockConfiguration)
 	} else if a.ko.Spec.PublicAccessBlockConfiguration != nil && b.ko.Spec.PublicAccessBlockConfiguration != nil {
