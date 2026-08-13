@@ -17,13 +17,27 @@ package access_point
 
 import (
 	"context"
+	"fmt"
 
+	corev1 "k8s.io/api/core/v1"
+	"k8s.io/apimachinery/pkg/types"
 	"sigs.k8s.io/controller-runtime/pkg/client"
 
+	ec2apitypes "github.com/aws-controllers-k8s/ec2-controller/apis/v1alpha1"
+	ackv1alpha1 "github.com/aws-controllers-k8s/runtime/apis/core/v1alpha1"
+	ackerr "github.com/aws-controllers-k8s/runtime/pkg/errors"
+	ackrt "github.com/aws-controllers-k8s/runtime/pkg/runtime"
 	acktypes "github.com/aws-controllers-k8s/runtime/pkg/types"
+	s3apitypes "github.com/aws-controllers-k8s/s3-controller/apis/v1alpha1"
 
 	svcapitypes "github.com/aws-controllers-k8s/s3control-controller/apis/v1alpha1"
 )
+
+// +kubebuilder:rbac:groups=s3.services.k8s.aws,resources=buckets,verbs=get;list
+// +kubebuilder:rbac:groups=s3.services.k8s.aws,resources=buckets/status,verbs=get;list
+
+// +kubebuilder:rbac:groups=ec2.services.k8s.aws,resources=vpcs,verbs=get;list
+// +kubebuilder:rbac:groups=ec2.services.k8s.aws,resources=vpcs/status,verbs=get;list
 
 // ClearResolvedReferences removes any reference values that were made
 // concrete in the spec. It returns a copy of the input AWSResource which
@@ -31,6 +45,16 @@ import (
 // values.
 func (rm *resourceManager) ClearResolvedReferences(res acktypes.AWSResource) acktypes.AWSResource {
 	ko := rm.concreteResource(res).ko.DeepCopy()
+
+	if ko.Spec.BucketRef != nil {
+		ko.Spec.Bucket = nil
+	}
+
+	if ko.Spec.VPCConfiguration != nil {
+		if ko.Spec.VPCConfiguration.VPCRef != nil {
+			ko.Spec.VPCConfiguration.VPCID = nil
+		}
+	}
 
 	return &resource{ko}
 }
@@ -47,11 +71,224 @@ func (rm *resourceManager) ResolveReferences(
 	apiReader client.Reader,
 	res acktypes.AWSResource,
 ) (acktypes.AWSResource, bool, error) {
-	return res, false, nil
+	ko := rm.concreteResource(res).ko
+
+	resourceHasReferences := false
+	err := validateReferenceFields(ko)
+	if fieldHasReferences, err := rm.resolveReferenceForBucket(ctx, apiReader, ko); err != nil {
+		return &resource{ko}, (resourceHasReferences || fieldHasReferences), err
+	} else {
+		resourceHasReferences = resourceHasReferences || fieldHasReferences
+	}
+
+	if fieldHasReferences, err := rm.resolveReferenceForVPCConfiguration_VPCID(ctx, apiReader, ko); err != nil {
+		return &resource{ko}, (resourceHasReferences || fieldHasReferences), err
+	} else {
+		resourceHasReferences = resourceHasReferences || fieldHasReferences
+	}
+
+	return &resource{ko}, resourceHasReferences, err
 }
 
 // validateReferenceFields validates the reference field and corresponding
 // identifier field.
 func validateReferenceFields(ko *svcapitypes.AccessPoint) error {
+
+	if ko.Spec.BucketRef != nil && ko.Spec.Bucket != nil {
+		return ackerr.ResourceReferenceAndIDNotSupportedFor("Bucket", "BucketRef")
+	}
+	if ko.Spec.BucketRef == nil && ko.Spec.Bucket == nil {
+		return ackerr.ResourceReferenceOrIDRequiredFor("Bucket", "BucketRef")
+	}
+
+	if ko.Spec.VPCConfiguration != nil {
+		if ko.Spec.VPCConfiguration.VPCRef != nil && ko.Spec.VPCConfiguration.VPCID != nil {
+			return ackerr.ResourceReferenceAndIDNotSupportedFor("VPCConfiguration.VPCID", "VPCConfiguration.VPCRef")
+		}
+	}
+	return nil
+}
+
+// resolveReferenceForBucket reads the resource referenced
+// from BucketRef field and sets the Bucket
+// from referenced resource. Returns a boolean indicating whether a reference
+// contains references, or an error
+func (rm *resourceManager) resolveReferenceForBucket(
+	ctx context.Context,
+	apiReader client.Reader,
+	ko *svcapitypes.AccessPoint,
+) (hasReferences bool, err error) {
+	if ko.Spec.BucketRef != nil && ko.Spec.BucketRef.From != nil {
+		hasReferences = true
+		arr := ko.Spec.BucketRef.From
+		if arr.Name == nil || *arr.Name == "" {
+			return hasReferences, fmt.Errorf("provided resource reference is nil or empty: BucketRef")
+		}
+		namespace, err := ackrt.ResolveCrossNamespaceReference(
+			ctx,
+			rm.cfg.EnableCrossNamespace,
+			&ko.Status.Conditions,
+			ackrt.CrossNamespaceRefKindResource,
+			ko.ObjectMeta.GetNamespace(),
+			arr.Namespace,
+			*arr.Name,
+		)
+		if err != nil {
+			return hasReferences, err
+		}
+		obj := &s3apitypes.Bucket{}
+		if err := getReferencedResourceState_Bucket(ctx, apiReader, obj, *arr.Name, namespace); err != nil {
+			return hasReferences, err
+		}
+		ko.Spec.Bucket = (*string)(obj.Spec.Name)
+	}
+
+	return hasReferences, nil
+}
+
+// getReferencedResourceState_Bucket looks up whether a referenced resource
+// exists and is in a ACK.ResourceSynced=True state. If the referenced resource does exist and is
+// in a Synced state, returns nil, otherwise returns `ackerr.ResourceReferenceTerminalFor` or
+// `ResourceReferenceNotSyncedFor` depending on if the resource is in a Terminal state.
+func getReferencedResourceState_Bucket(
+	ctx context.Context,
+	apiReader client.Reader,
+	obj *s3apitypes.Bucket,
+	name string, // the Kubernetes name of the referenced resource
+	namespace string, // the Kubernetes namespace of the referenced resource
+) error {
+	namespacedName := types.NamespacedName{
+		Namespace: namespace,
+		Name:      name,
+	}
+	err := apiReader.Get(ctx, namespacedName, obj)
+	if err != nil {
+		return err
+	}
+	var refResourceTerminal bool
+	for _, cond := range obj.Status.Conditions {
+		if cond.Type == ackv1alpha1.ConditionTypeTerminal &&
+			cond.Status == corev1.ConditionTrue {
+			return ackerr.ResourceReferenceTerminalFor(
+				"Bucket",
+				namespace, name)
+		}
+	}
+	if refResourceTerminal {
+		return ackerr.ResourceReferenceTerminalFor(
+			"Bucket",
+			namespace, name)
+	}
+	var refResourceSynced bool
+	for _, cond := range obj.Status.Conditions {
+		if cond.Type == ackv1alpha1.ConditionTypeResourceSynced &&
+			cond.Status == corev1.ConditionTrue {
+			refResourceSynced = true
+		}
+	}
+	if !refResourceSynced {
+		return ackerr.ResourceReferenceNotSyncedFor(
+			"Bucket",
+			namespace, name)
+	}
+	if obj.Spec.Name == nil {
+		return ackerr.ResourceReferenceMissingTargetFieldFor(
+			"Bucket",
+			namespace, name,
+			"Spec.Name")
+	}
+	return nil
+}
+
+// resolveReferenceForVPCConfiguration_VPCID reads the resource referenced
+// from VPCConfiguration.VPCRef field and sets the VPCConfiguration.VPCID
+// from referenced resource. Returns a boolean indicating whether a reference
+// contains references, or an error
+func (rm *resourceManager) resolveReferenceForVPCConfiguration_VPCID(
+	ctx context.Context,
+	apiReader client.Reader,
+	ko *svcapitypes.AccessPoint,
+) (hasReferences bool, err error) {
+	if ko.Spec.VPCConfiguration != nil {
+		if ko.Spec.VPCConfiguration.VPCRef != nil && ko.Spec.VPCConfiguration.VPCRef.From != nil {
+			hasReferences = true
+			arr := ko.Spec.VPCConfiguration.VPCRef.From
+			if arr.Name == nil || *arr.Name == "" {
+				return hasReferences, fmt.Errorf("provided resource reference is nil or empty: VPCConfiguration.VPCRef")
+			}
+			namespace, err := ackrt.ResolveCrossNamespaceReference(
+				ctx,
+				rm.cfg.EnableCrossNamespace,
+				&ko.Status.Conditions,
+				ackrt.CrossNamespaceRefKindResource,
+				ko.ObjectMeta.GetNamespace(),
+				arr.Namespace,
+				*arr.Name,
+			)
+			if err != nil {
+				return hasReferences, err
+			}
+			obj := &ec2apitypes.VPC{}
+			if err := getReferencedResourceState_VPC(ctx, apiReader, obj, *arr.Name, namespace); err != nil {
+				return hasReferences, err
+			}
+			ko.Spec.VPCConfiguration.VPCID = (*string)(obj.Status.VPCID)
+		}
+	}
+
+	return hasReferences, nil
+}
+
+// getReferencedResourceState_VPC looks up whether a referenced resource
+// exists and is in a ACK.ResourceSynced=True state. If the referenced resource does exist and is
+// in a Synced state, returns nil, otherwise returns `ackerr.ResourceReferenceTerminalFor` or
+// `ResourceReferenceNotSyncedFor` depending on if the resource is in a Terminal state.
+func getReferencedResourceState_VPC(
+	ctx context.Context,
+	apiReader client.Reader,
+	obj *ec2apitypes.VPC,
+	name string, // the Kubernetes name of the referenced resource
+	namespace string, // the Kubernetes namespace of the referenced resource
+) error {
+	namespacedName := types.NamespacedName{
+		Namespace: namespace,
+		Name:      name,
+	}
+	err := apiReader.Get(ctx, namespacedName, obj)
+	if err != nil {
+		return err
+	}
+	var refResourceTerminal bool
+	for _, cond := range obj.Status.Conditions {
+		if cond.Type == ackv1alpha1.ConditionTypeTerminal &&
+			cond.Status == corev1.ConditionTrue {
+			return ackerr.ResourceReferenceTerminalFor(
+				"VPC",
+				namespace, name)
+		}
+	}
+	if refResourceTerminal {
+		return ackerr.ResourceReferenceTerminalFor(
+			"VPC",
+			namespace, name)
+	}
+	var refResourceSynced bool
+	for _, cond := range obj.Status.Conditions {
+		if cond.Type == ackv1alpha1.ConditionTypeResourceSynced &&
+			cond.Status == corev1.ConditionTrue {
+			refResourceSynced = true
+		}
+	}
+	if !refResourceSynced {
+		return ackerr.ResourceReferenceNotSyncedFor(
+			"VPC",
+			namespace, name)
+	}
+	if obj.Status.VPCID == nil {
+		return ackerr.ResourceReferenceMissingTargetFieldFor(
+			"VPC",
+			namespace, name,
+			"Status.VPCID")
+	}
 	return nil
 }

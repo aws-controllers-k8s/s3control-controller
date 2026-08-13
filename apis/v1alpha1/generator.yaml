@@ -18,11 +18,21 @@ resources:
     tags:
       ignore: true
     fields:
+      Bucket:
+        references:
+          resource: Bucket
+          service_name: s3
+          path: Spec.Name
       Policy:
         from:
           operation: PutAccessPointPolicy
           path: Policy
         is_iam_policy: true
+      VpcConfiguration.VpcId:
+        references:
+          resource: VPC
+          service_name: ec2
+          path: Status.VPCID
     hooks:
       sdk_read_one_post_set_output:
         template_path: hooks/access_point/sdk_read_one_post_set_output.go.tpl

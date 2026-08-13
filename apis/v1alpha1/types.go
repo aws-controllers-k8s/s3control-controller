@@ -200,4 +200,6 @@ type S3ObjectOwner struct {
 // The virtual private cloud (VPC) configuration for an access point.
 type VPCConfiguration struct {
 	VPCID *string `json:"vpcID,omitempty"`
+	// Reference field for VPCID
+	VPCRef *ackv1alpha1.AWSResourceReferenceWrapper `json:"vpcRef,omitempty"`
 }
