@@ -4,8 +4,6 @@ github.com/aws-controllers-k8s/ec2-controller v1.19.0 h1:eweLqSLBllTT1eJxroLYgSX
 github.com/aws-controllers-k8s/ec2-controller v1.19.0/go.mod h1:YDrPkorhtOkiod8ws+pEJbgqTOSRB0/AVPtLp2Jim0g=
 github.com/aws-controllers-k8s/runtime v0.62.0 h1:6Dw2zbk7565qatREuVwFttEAAFK0O9osavESH5RFX2I=
 github.com/aws-controllers-k8s/runtime v0.62.0/go.mod h1:U0E02HFCvRnLQplApOIeTPDBiRBKXjvyaRhb475bcGs=
-github.com/aws-controllers-k8s/s3-controller v1.9.0 h1:sIEh3ipkbzc99I0znEb0ericCS3cysjEWCylPvfHo8U=
-github.com/aws-controllers-k8s/s3-controller v1.9.0/go.mod h1:qaALr3zwSQfIsJrX7+yglahj7sZmDSSg/TwVOlxOswA=
 github.com/aws/aws-sdk-go v1.55.5 h1:KKUZBfBoyqy5d3swXyiC7Q76ic40rYcbqH7qjh59kzU=
 github.com/aws/aws-sdk-go v1.55.5/go.mod h1:eRwEWoyTWFMVYVQzKMNHWP5/RV4xIUGMQfXQHfHkpNU=
 github.com/aws/aws-sdk-go-v2 v1.41.5 h1:dj5kopbwUsVUVFgO4Fi5BIT3t4WyqIDjGKCangnV/yY=

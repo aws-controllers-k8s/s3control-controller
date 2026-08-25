@@ -42,7 +42,8 @@ type AccessPointSpec struct {
 	// reports through Outpost my-outpost owned by account 123456789012 in Region
 	// us-west-2, use the URL encoding of arn:aws:s3-outposts:us-west-2:123456789012:outpost/my-outpost/bucket/reports.
 	// The value must be URL encoded.
-	Bucket *string `json:"bucket,omitempty"`
+	// +kubebuilder:validation:Required
+	Bucket *string `json:"bucket"`
 	// The Amazon Web Services account ID associated with the S3 bucket associated
 	// with this access point.
 	//
@@ -52,8 +53,7 @@ type AccessPointSpec struct {
 	// the BucketAccountId is required.
 	//
 	// Regex Pattern: `^\d{12}$`
-	BucketAccountID *string                                  `json:"bucketAccountID,omitempty"`
-	BucketRef       *ackv1alpha1.AWSResourceReferenceWrapper `json:"bucketRef,omitempty"`
+	BucketAccountID *string `json:"bucketAccountID,omitempty"`
 	// The name you want to assign to this access point.
 	// +kubebuilder:validation:Required
 	Name *string `json:"name"`

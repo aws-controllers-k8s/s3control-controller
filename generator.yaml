@@ -18,11 +18,15 @@ resources:
     tags:
       ignore: true
     fields:
-      Bucket:
-        references:
-          resource: Bucket
-          service_name: s3
-          path: Spec.Name
+      # NOTE: Spec.Bucket is deliberately NOT reference-backed. It is polymorphic:
+      # for a general purpose bucket it holds the bucket NAME, and for an S3 on
+      # Outposts bucket it holds an ARN of the form
+      # arn:aws:s3-outposts:<region>:<account>:outpost/<outpost-id>/bucket/<name>.
+      # Those are two different resource types carried in two different value
+      # formats, and a references block takes exactly one resource and one path,
+      # so wiring the general purpose arm would privilege it invisibly and could
+      # not serve the Outposts arm at all. Outposts access points are in scope for
+      # this resource - see the VPCConfiguration field, which is required for them.
       Policy:
         from:
           operation: PutAccessPointPolicy

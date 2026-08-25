@@ -20,7 +20,6 @@ import (
 
 	ackcompare "github.com/aws-controllers-k8s/runtime/pkg/compare"
 	acktags "github.com/aws-controllers-k8s/runtime/pkg/tags"
-	"k8s.io/apimachinery/pkg/api/equality"
 )
 
 // Hack to avoid import errors during build...
@@ -62,9 +61,6 @@ func newResourceDelta(
 		if *a.ko.Spec.BucketAccountID != *b.ko.Spec.BucketAccountID {
 			delta.Add("Spec.BucketAccountID", a.ko.Spec.BucketAccountID, b.ko.Spec.BucketAccountID)
 		}
-	}
-	if !equality.Semantic.Equalities.DeepEqual(a.ko.Spec.BucketRef, b.ko.Spec.BucketRef) {
-		delta.Add("Spec.BucketRef", a.ko.Spec.BucketRef, b.ko.Spec.BucketRef)
 	}
 	if ackcompare.HasNilDifference(a.ko.Spec.Name, b.ko.Spec.Name) {
 		delta.Add("Spec.Name", a.ko.Spec.Name, b.ko.Spec.Name)
