@@ -15,9 +15,11 @@ resources:
       errors:
         404:
           code: NoSuchAccessPoint
-    tags:
-      ignore: true
     fields:
+      Tags:
+        from:
+          operation: TagResource
+          path: Tags
       # NOTE: Spec.Bucket is deliberately NOT reference-backed. It is polymorphic:
       # for a general purpose bucket it holds the bucket NAME, and for an S3 on
       # Outposts bucket it holds an ARN of the form

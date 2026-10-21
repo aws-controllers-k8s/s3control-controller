@@ -25,7 +25,8 @@ import (
 // customUpdate handles updates for the AccessPoint resource.
 // Since the AccessPoint API has no UpdateAccessPoint operation for spec fields,
 // this method only handles policy synchronisation via PutAccessPointPolicy /
-// DeleteAccessPointPolicy.
+// DeleteAccessPointPolicy and tag synchronisation via TagResource /
+// UntagResource.
 func (rm *resourceManager) customUpdate(
 	ctx context.Context,
 	desired *resource,
@@ -57,6 +58,12 @@ func (rm *resourceManager) customUpdate(
 					return nil, err
 				}
 			}
+		}
+	}
+
+	if delta.DifferentAt("Spec.Tags") {
+		if err = rm.syncTags(ctx, desired, latest); err != nil {
+			return nil, err
 		}
 	}
 

@@ -14,3 +14,10 @@ if policyErr != nil {
 } else {
 	ko.Spec.Policy = policyResp.Policy
 }
+
+if ko.Status.ACKResourceMetadata != nil && ko.Status.ACKResourceMetadata.ARN != nil {
+	ko.Spec.Tags, err = rm.getTags(ctx, r.ko.Spec.AccountID, string(*ko.Status.ACKResourceMetadata.ARN))
+	if err != nil {
+		return nil, err
+	}
+}
