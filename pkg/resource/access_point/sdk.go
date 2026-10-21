@@ -163,6 +163,13 @@ func (rm *resourceManager) sdkFind(
 		ko.Spec.Policy = policyResp.Policy
 	}
 
+	if ko.Status.ACKResourceMetadata != nil && ko.Status.ACKResourceMetadata.ARN != nil {
+		ko.Spec.Tags, err = rm.getTags(ctx, r.ko.Spec.AccountID, string(*ko.Status.ACKResourceMetadata.ARN))
+		if err != nil {
+			return nil, err
+		}
+	}
+
 	return &resource{ko}, nil
 }
 
@@ -248,7 +255,9 @@ func (rm *resourceManager) sdkCreate(
 			}
 		}
 	}()
-	if ko.Spec.Policy != nil {
+	// The policy and the tags are written by the update path, so a spec that
+	// carries either needs another reconcile right after the create.
+	if ko.Spec.Policy != nil || len(ko.Spec.Tags) > 0 {
 		ackcondition.SetSynced(&resource{ko}, corev1.ConditionFalse, nil, nil)
 	}
 

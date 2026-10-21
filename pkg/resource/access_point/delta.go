@@ -108,6 +108,11 @@ func newResourceDelta(
 			}
 		}
 	}
+	desiredACKTags, _ := convertToOrderedACKTags(a.ko.Spec.Tags)
+	latestACKTags, _ := convertToOrderedACKTags(b.ko.Spec.Tags)
+	if !ackcompare.MapStringStringEqual(desiredACKTags, latestACKTags) {
+		delta.Add("Spec.Tags", a.ko.Spec.Tags, b.ko.Spec.Tags)
+	}
 	if ackcompare.HasNilDifference(a.ko.Spec.VPCConfiguration, b.ko.Spec.VPCConfiguration) {
 		delta.Add("Spec.VPCConfiguration", a.ko.Spec.VPCConfiguration, b.ko.Spec.VPCConfiguration)
 	} else if a.ko.Spec.VPCConfiguration != nil && b.ko.Spec.VPCConfiguration != nil {

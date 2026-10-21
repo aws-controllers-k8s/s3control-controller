@@ -65,6 +65,9 @@ type AccessPointSpec struct {
 	// The PublicAccessBlock configuration that you want to apply to the access
 	// point.
 	PublicAccessBlockConfiguration *PublicAccessBlockConfiguration `json:"publicAccessBlockConfiguration,omitempty"`
+	// The Amazon Web Services resource tags that you want to add to the specified
+	// S3 resource.
+	Tags []*Tag `json:"tags,omitempty"`
 	// If you include this field, Amazon S3 restricts access to this access point
 	// to requests from the specified virtual private cloud (VPC).
 	//

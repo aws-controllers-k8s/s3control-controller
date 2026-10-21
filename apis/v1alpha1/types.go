@@ -195,6 +195,30 @@ type S3ObjectOwner struct {
 	ID          *string `json:"id,omitempty"`
 }
 
+// A container for a key-value name pair.
+type S3Tag struct {
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
+}
+
+type StorageLensTag struct {
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
+}
+
+// An Amazon Web Services resource tag that's associated with your S3 resource.
+// You can add tags to new objects when you upload them, or you can add object
+// tags to existing objects.
+//
+// This operation is only supported for S3 Storage Lens groups (https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-lens-groups.html)
+// and for S3 Access Grants (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-grants-tagging.html).
+// The tagged resource can be an S3 Storage Lens group or S3 Access Grants instance,
+// registered location, or grant.
+type Tag struct {
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
+}
+
 // The virtual private cloud (VPC) configuration for an access point.
 type VPCConfiguration struct {
 	VPCID *string `json:"vpcID,omitempty"`
