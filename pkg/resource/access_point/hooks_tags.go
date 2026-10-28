@@ -105,9 +105,14 @@ func (rm *resourceManager) syncTags(
 	return nil
 }
 
-// tagsSupported reports whether the S3 Control tagging APIs accept this ARN.
-// They are not documented for S3 on Outposts access points or buckets.
-func tagsSupported(arn string) bool {
-	parsed, err := awsarn.Parse(arn)
-	return err == nil && parsed.Service != "s3-outposts"
+// tagsSupported reports whether the S3 Control tagging APIs accept the
+// resource, given as an ARN or as a general purpose bucket name. They are not
+// documented for S3 on Outposts access points or buckets.
+func tagsSupported(resource string) bool {
+	parsed, err := awsarn.Parse(resource)
+	if err != nil {
+		// a bucket name, which only general purpose buckets use
+		return true
+	}
+	return parsed.Service != "s3-outposts"
 }

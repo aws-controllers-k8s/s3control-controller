@@ -32,6 +32,8 @@ type AccessPoint_SDK struct {
 	Alias           *string `json:"alias,omitempty"`
 	Bucket          *string `json:"bucket,omitempty"`
 	BucketAccountID *string `json:"bucketAccountID,omitempty"`
+	DataSourceID    *string `json:"dataSourceID,omitempty"`
+	DataSourceType  *string `json:"dataSourceType,omitempty"`
 	Name            *string `json:"name,omitempty"`
 	NetworkOrigin   *string `json:"networkOrigin,omitempty"`
 	// The virtual private cloud (VPC) configuration for an access point.
@@ -73,6 +75,11 @@ type EstablishedMultiRegionAccessPointPolicy struct {
 // buckets (https://docs.aws.amazon.com/AmazonS3/latest/userguide/directory-buckets-overview.html).
 type JobManifestLocation struct {
 	ETag *string `json:"eTag,omitempty"`
+}
+
+// Contains the configuration parameters for a job-completion report.
+type JobReport struct {
+	ExpectedBucketOwner *string `json:"expectedBucketOwner,omitempty"`
 }
 
 // A collection of statuses for a Multi-Region Access Point in the various Regions
@@ -206,14 +213,9 @@ type StorageLensTag struct {
 	Value *string `json:"value,omitempty"`
 }
 
-// An Amazon Web Services resource tag that's associated with your S3 resource.
-// You can add tags to new objects when you upload them, or you can add object
-// tags to existing objects.
-//
-// This operation is only supported for S3 Storage Lens groups (https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-lens-groups.html)
-// and for S3 Access Grants (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-grants-tagging.html).
-// The tagged resource can be an S3 Storage Lens group or S3 Access Grants instance,
-// registered location, or grant.
+// A key-value pair that you use to label your resources. You can add tags to
+// new resources when you create them, or you can add tags to existing resources.
+// Tags can help you organize, track costs for, and control access to resources.
 type Tag struct {
 	Key   *string `json:"key,omitempty"`
 	Value *string `json:"value,omitempty"`

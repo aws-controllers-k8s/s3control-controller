@@ -118,29 +118,29 @@ func (rm *resourceManager) sdkFind(
 		ko.Spec.Name = nil
 	}
 	if resp.PublicAccessBlockConfiguration != nil {
-		f8 := &svcapitypes.PublicAccessBlockConfiguration{}
+		f10 := &svcapitypes.PublicAccessBlockConfiguration{}
 		if resp.PublicAccessBlockConfiguration.BlockPublicAcls != nil {
-			f8.BlockPublicACLs = resp.PublicAccessBlockConfiguration.BlockPublicAcls
+			f10.BlockPublicACLs = resp.PublicAccessBlockConfiguration.BlockPublicAcls
 		}
 		if resp.PublicAccessBlockConfiguration.BlockPublicPolicy != nil {
-			f8.BlockPublicPolicy = resp.PublicAccessBlockConfiguration.BlockPublicPolicy
+			f10.BlockPublicPolicy = resp.PublicAccessBlockConfiguration.BlockPublicPolicy
 		}
 		if resp.PublicAccessBlockConfiguration.IgnorePublicAcls != nil {
-			f8.IgnorePublicACLs = resp.PublicAccessBlockConfiguration.IgnorePublicAcls
+			f10.IgnorePublicACLs = resp.PublicAccessBlockConfiguration.IgnorePublicAcls
 		}
 		if resp.PublicAccessBlockConfiguration.RestrictPublicBuckets != nil {
-			f8.RestrictPublicBuckets = resp.PublicAccessBlockConfiguration.RestrictPublicBuckets
+			f10.RestrictPublicBuckets = resp.PublicAccessBlockConfiguration.RestrictPublicBuckets
 		}
-		ko.Spec.PublicAccessBlockConfiguration = f8
+		ko.Spec.PublicAccessBlockConfiguration = f10
 	} else {
 		ko.Spec.PublicAccessBlockConfiguration = nil
 	}
 	if resp.VpcConfiguration != nil {
-		f9 := &svcapitypes.VPCConfiguration{}
+		f11 := &svcapitypes.VPCConfiguration{}
 		if resp.VpcConfiguration.VpcId != nil {
-			f9.VPCID = resp.VpcConfiguration.VpcId
+			f11.VPCID = resp.VpcConfiguration.VpcId
 		}
-		ko.Spec.VPCConfiguration = f9
+		ko.Spec.VPCConfiguration = f11
 	} else {
 		ko.Spec.VPCConfiguration = nil
 	}
@@ -163,7 +163,10 @@ func (rm *resourceManager) sdkFind(
 		ko.Spec.Policy = policyResp.Policy
 	}
 
-	if ko.Status.ACKResourceMetadata != nil && ko.Status.ACKResourceMetadata.ARN != nil {
+	// The tagging APIs are not documented for S3 on Outposts access points, so
+	// their tags are left as declared and produce no delta.
+	if ko.Status.ACKResourceMetadata != nil && ko.Status.ACKResourceMetadata.ARN != nil &&
+		tagsSupported(string(*ko.Status.ACKResourceMetadata.ARN)) {
 		ko.Spec.Tags, err = rm.getTags(ctx, r.ko.Spec.AccountID, string(*ko.Status.ACKResourceMetadata.ARN))
 		if err != nil {
 			return nil, err
@@ -216,6 +219,11 @@ func (rm *resourceManager) sdkCreate(
 	if err != nil {
 		return nil, err
 	}
+	// The S3 Control tagging APIs are not documented for S3 on Outposts
+	// access points; leave the tags out of the create for an Outposts bucket.
+	if !tagsSupported(aws.ToString(desired.ko.Spec.Bucket)) {
+		input.Tags = nil
+	}
 
 	var resp *svcsdk.CreateAccessPointOutput
 	_ = resp
@@ -255,9 +263,7 @@ func (rm *resourceManager) sdkCreate(
 			}
 		}
 	}()
-	// The policy and the tags are written by the update path, so a spec that
-	// carries either needs another reconcile right after the create.
-	if ko.Spec.Policy != nil || len(ko.Spec.Tags) > 0 {
+	if ko.Spec.Policy != nil {
 		ackcondition.SetSynced(&resource{ko}, corev1.ConditionFalse, nil, nil)
 	}
 
@@ -300,12 +306,26 @@ func (rm *resourceManager) newCreateRequestPayload(
 		}
 		res.PublicAccessBlockConfiguration = f4
 	}
-	if r.ko.Spec.VPCConfiguration != nil {
-		f5 := &svcsdktypes.VpcConfiguration{}
-		if r.ko.Spec.VPCConfiguration.VPCID != nil {
-			f5.VpcId = r.ko.Spec.VPCConfiguration.VPCID
+	if r.ko.Spec.Tags != nil {
+		f5 := []svcsdktypes.Tag{}
+		for _, f5iter := range r.ko.Spec.Tags {
+			f5elem := &svcsdktypes.Tag{}
+			if f5iter.Key != nil {
+				f5elem.Key = f5iter.Key
+			}
+			if f5iter.Value != nil {
+				f5elem.Value = f5iter.Value
+			}
+			f5 = append(f5, *f5elem)
 		}
-		res.VpcConfiguration = f5
+		res.Tags = f5
+	}
+	if r.ko.Spec.VPCConfiguration != nil {
+		f6 := &svcsdktypes.VpcConfiguration{}
+		if r.ko.Spec.VPCConfiguration.VPCID != nil {
+			f6.VpcId = r.ko.Spec.VPCConfiguration.VPCID
+		}
+		res.VpcConfiguration = f6
 	}
 
 	return res, nil

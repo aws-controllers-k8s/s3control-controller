@@ -76,13 +76,23 @@ spec:
                   Regex Pattern: `^\d{12}$`
                 type: string
               name:
-                description: The name you want to assign to this access point.
+                description: |-
+                  The name you want to assign to this access point.
+
+                  For directory buckets, the access point name must consist of a base name
+                  that you provide and suffix that includes the ZoneID (Amazon Web Services
+                  Availability Zone or Local Zone) of your bucket location, followed by --xa-s3.
+                  For more information, see Managing access to shared datasets in directory
+                  buckets with access points (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-directory-buckets.html)
+                  in the Amazon S3 User Guide.
                 type: string
               policy:
                 description: |-
                   The policy that you want to apply to the specified access point. For more
                   information about access point policies, see Managing data access with Amazon
                   S3 access points (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points.html)
+                  or Managing access to shared datasets in directory buckets with access points
+                  (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-directory-buckets.html)
                   in the Amazon S3 User Guide.
                 type: string
               publicAccessBlockConfiguration:
@@ -101,18 +111,16 @@ spec:
                 type: object
               tags:
                 description: |-
-                  The Amazon Web Services resource tags that you want to add to the specified
-                  S3 resource.
+                  An array of tags that you can apply to an access point. Tags are key-value
+                  pairs of metadata used to control access to your access points. For more
+                  information about tags, see Using tags with Amazon S3 (https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html).
+                  For information about tagging access points, see Using tags for attribute-based
+                  access control (ABAC) (https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html#using-tags-for-abac).
                 items:
                   description: |-
-                    An Amazon Web Services resource tag that's associated with your S3 resource.
-                    You can add tags to new objects when you upload them, or you can add object
-                    tags to existing objects.
-
-                    This operation is only supported for S3 Storage Lens groups (https://docs.aws.amazon.com/AmazonS3/latest/userguide/storage-lens-groups.html)
-                    and for S3 Access Grants (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-grants-tagging.html).
-                    The tagged resource can be an S3 Storage Lens group or S3 Access Grants instance,
-                    registered location, or grant.
+                    A key-value pair that you use to label your resources. You can add tags to
+                    new resources when you create them, or you can add tags to existing resources.
+                    Tags can help you organize, track costs for, and control access to resources.
                   properties:
                     key:
                       type: string

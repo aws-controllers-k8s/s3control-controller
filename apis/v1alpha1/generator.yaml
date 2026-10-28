@@ -3,16 +3,16 @@ ignore:
     - AccessGrant
     - AccessGrantsInstance
     - AccessGrantsLocation
-  field_paths:
-    # Directory-bucket only. Needs GetAccessPointScope/PutAccessPointScope
-    # wiring (GetAccessPoint does not return it), so it stays out for now.
-    - CreateAccessPointInput.Scope
     # AccessPoint
     - AccessPointForObjectLambda
     - Bucket
     - Job
     - MultiRegionAccessPoint
     - StorageLensGroup
+  field_paths:
+    # Directory-bucket only. Needs GetAccessPointScope/PutAccessPointScope
+    # wiring (GetAccessPoint does not return it), so it stays out for now.
+    - CreateAccessPointInput.Scope
 resources:
   AccessPoint:
     exceptions:

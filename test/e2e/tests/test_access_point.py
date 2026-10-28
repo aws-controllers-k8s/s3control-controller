@@ -313,6 +313,23 @@ class TestAccessPoint:
         assert aws_tags["updatedtagkey"] == "updatedtagvalue"
         tags.assert_ack_system_tags(tags=[{"Key": k, "Value": v} for k, v in aws_tags.items()])
 
+        # a policy and a tag change in the same patch
+        policy = _make_policy(account_id, resource_name)
+        updates = {
+            "spec": {
+                "policy": policy,
+                "tags": [{"key": "policytagkey", "value": "policytagvalue"}],
+            },
+        }
+        k8s.patch_custom_resource(ref, updates)
+        time.sleep(UPDATE_WAIT_AFTER_SECONDS)
+        assert k8s.wait_on_condition(ref, "ACK.ResourceSynced", "True", wait_periods=5)
+
+        aws_tags = validator.get_access_point_tags(account_id, arn)
+        assert "updatedtagkey" not in aws_tags
+        assert aws_tags["policytagkey"] == "policytagvalue"
+        assert validator.get_access_point_policy(account_id, resource_name) is not None
+
         updates = {
             "spec": {"tags": []},
         }
@@ -321,5 +338,5 @@ class TestAccessPoint:
         assert k8s.wait_on_condition(ref, "ACK.ResourceSynced", "True", wait_periods=5)
 
         aws_tags = validator.get_access_point_tags(account_id, arn)
-        assert "updatedtagkey" not in aws_tags
+        assert "policytagkey" not in aws_tags
         tags.assert_ack_system_tags(tags=[{"Key": k, "Value": v} for k, v in aws_tags.items()])
