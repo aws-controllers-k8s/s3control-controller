@@ -19,6 +19,7 @@ import (
 	ackcompare "github.com/aws-controllers-k8s/runtime/pkg/compare"
 	ackrtlog "github.com/aws-controllers-k8s/runtime/pkg/runtime/log"
 	"github.com/aws/aws-sdk-go-v2/aws"
+	awsarn "github.com/aws/aws-sdk-go-v2/aws/arn"
 	svcsdk "github.com/aws/aws-sdk-go-v2/service/s3control"
 	svcsdktypes "github.com/aws/aws-sdk-go-v2/service/s3control/types"
 
@@ -59,7 +60,13 @@ func (rm *resourceManager) syncTags(
 	exit := rlog.Trace("rm.syncTags")
 	defer func() { exit(err) }()
 
+	if latest.ko.Status.ACKResourceMetadata == nil || latest.ko.Status.ACKResourceMetadata.ARN == nil {
+		return nil
+	}
 	resourceARN := string(*latest.ko.Status.ACKResourceMetadata.ARN)
+	if !tagsSupported(resourceARN) {
+		return nil
+	}
 	from, _ := convertToOrderedACKTags(latest.ko.Spec.Tags)
 	to, _ := convertToOrderedACKTags(desired.ko.Spec.Tags)
 	added, _, removed := ackcompare.GetTagsDifference(from, to)
@@ -96,4 +103,11 @@ func (rm *resourceManager) syncTags(
 		}
 	}
 	return nil
+}
+
+// tagsSupported reports whether the S3 Control tagging APIs accept this ARN.
+// They are not documented for S3 on Outposts access points or buckets.
+func tagsSupported(arn string) bool {
+	parsed, err := awsarn.Parse(arn)
+	return err == nil && parsed.Service != "s3-outposts"
 }
