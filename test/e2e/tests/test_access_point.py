@@ -19,6 +19,7 @@ import pytest
 import time
 import logging
 
+from acktest import tags
 from acktest.resources import random_suffix_name
 from acktest.k8s import resource as k8s
 from acktest.aws.identity import get_account_id, get_region
@@ -53,6 +54,49 @@ def simple_access_point(s3control_client):
     logging.debug(resource_data)
 
     # Create k8s resource
+    ref = k8s.CustomResourceReference(
+        CRD_GROUP, CRD_VERSION, RESOURCE_PLURAL,
+        resource_name, namespace="default",
+    )
+    k8s.create_custom_resource(ref, resource_data)
+
+    time.sleep(CREATE_WAIT_AFTER_SECONDS)
+    cr = k8s.wait_resource_consumed_by_controller(ref)
+
+    assert cr is not None
+    assert k8s.get_resource_exists(ref)
+
+    yield (ref, cr, resource_name)
+
+    _, deleted = k8s.delete_custom_resource(
+        ref,
+        period_length=DELETE_WAIT_AFTER_SECONDS,
+    )
+    assert deleted
+
+    time.sleep(DELETE_WAIT_AFTER_SECONDS)
+
+    validator = S3ControlValidator(s3control_client)
+    assert not validator.access_point_exist(account_id, resource_name)
+
+
+@pytest.fixture(scope="module")
+def access_point_with_tags(s3control_client):
+    resource_name = random_suffix_name("ap-tags", 24)
+    account_id = get_account_id()
+
+    replacements = REPLACEMENT_VALUES.copy()
+    replacements["ACCESS_POINT_NAME"] = resource_name
+    replacements["ACCOUNT_ID"] = account_id
+    replacements["BUCKET_NAME"] = get_bootstrap_resources().Bucket.name
+    replacements["TAG_KEY"] = "initialtagkey"
+    replacements["TAG_VALUE"] = "initialtagvalue"
+
+    resource_data = load_s3control_resource(
+        "accesspoint_with_tags",
+        additional_replacements=replacements,
+    )
+
     ref = k8s.CustomResourceReference(
         CRD_GROUP, CRD_VERSION, RESOURCE_PLURAL,
         resource_name, namespace="default",
@@ -242,3 +286,57 @@ class TestAccessPoint:
 
         aws_policy = validator.get_access_point_policy(account_id, resource_name)
         assert aws_policy is None, "Expected policy to be removed after patch"
+
+    def test_crud_tags(self, s3control_client, access_point_with_tags):
+        (ref, cr, resource_name) = access_point_with_tags
+        account_id = get_account_id()
+        validator = S3ControlValidator(s3control_client)
+
+        assert k8s.wait_on_condition(ref, "ACK.ResourceSynced", "True", wait_periods=5)
+        cr = k8s.get_resource(ref)
+        arn = cr["status"]["ackResourceMetadata"]["arn"]
+
+        aws_tags = validator.get_access_point_tags(account_id, arn)
+        assert aws_tags is not None
+        tags.assert_ack_system_tags(tags=[{"Key": k, "Value": v} for k, v in aws_tags.items()])
+        assert aws_tags["initialtagkey"] == "initialtagvalue"
+
+        updates = {
+            "spec": {"tags": [{"key": "updatedtagkey", "value": "updatedtagvalue"}]},
+        }
+        k8s.patch_custom_resource(ref, updates)
+        time.sleep(UPDATE_WAIT_AFTER_SECONDS)
+        assert k8s.wait_on_condition(ref, "ACK.ResourceSynced", "True", wait_periods=5)
+
+        aws_tags = validator.get_access_point_tags(account_id, arn)
+        assert "initialtagkey" not in aws_tags
+        assert aws_tags["updatedtagkey"] == "updatedtagvalue"
+        tags.assert_ack_system_tags(tags=[{"Key": k, "Value": v} for k, v in aws_tags.items()])
+
+        # a policy and a tag change in the same patch
+        policy = _make_policy(account_id, resource_name)
+        updates = {
+            "spec": {
+                "policy": policy,
+                "tags": [{"key": "policytagkey", "value": "policytagvalue"}],
+            },
+        }
+        k8s.patch_custom_resource(ref, updates)
+        time.sleep(UPDATE_WAIT_AFTER_SECONDS)
+        assert k8s.wait_on_condition(ref, "ACK.ResourceSynced", "True", wait_periods=5)
+
+        aws_tags = validator.get_access_point_tags(account_id, arn)
+        assert "updatedtagkey" not in aws_tags
+        assert aws_tags["policytagkey"] == "policytagvalue"
+        assert validator.get_access_point_policy(account_id, resource_name) is not None
+
+        updates = {
+            "spec": {"tags": []},
+        }
+        k8s.patch_custom_resource(ref, updates)
+        time.sleep(UPDATE_WAIT_AFTER_SECONDS)
+        assert k8s.wait_on_condition(ref, "ACK.ResourceSynced", "True", wait_periods=5)
+
+        aws_tags = validator.get_access_point_tags(account_id, arn)
+        assert "policytagkey" not in aws_tags
+        tags.assert_ack_system_tags(tags=[{"Key": k, "Value": v} for k, v in aws_tags.items()])

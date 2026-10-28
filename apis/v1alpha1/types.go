@@ -32,6 +32,8 @@ type AccessPoint_SDK struct {
 	Alias           *string `json:"alias,omitempty"`
 	Bucket          *string `json:"bucket,omitempty"`
 	BucketAccountID *string `json:"bucketAccountID,omitempty"`
+	DataSourceID    *string `json:"dataSourceID,omitempty"`
+	DataSourceType  *string `json:"dataSourceType,omitempty"`
 	Name            *string `json:"name,omitempty"`
 	NetworkOrigin   *string `json:"networkOrigin,omitempty"`
 	// The virtual private cloud (VPC) configuration for an access point.
@@ -73,6 +75,11 @@ type EstablishedMultiRegionAccessPointPolicy struct {
 // buckets (https://docs.aws.amazon.com/AmazonS3/latest/userguide/directory-buckets-overview.html).
 type JobManifestLocation struct {
 	ETag *string `json:"eTag,omitempty"`
+}
+
+// Contains the configuration parameters for a job-completion report.
+type JobReport struct {
+	ExpectedBucketOwner *string `json:"expectedBucketOwner,omitempty"`
 }
 
 // A collection of statuses for a Multi-Region Access Point in the various Regions
@@ -193,6 +200,25 @@ type S3ObjectMetadata struct {
 type S3ObjectOwner struct {
 	DisplayName *string `json:"displayName,omitempty"`
 	ID          *string `json:"id,omitempty"`
+}
+
+// A container for a key-value name pair.
+type S3Tag struct {
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
+}
+
+type StorageLensTag struct {
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
+}
+
+// A key-value pair that you use to label your resources. You can add tags to
+// new resources when you create them, or you can add tags to existing resources.
+// Tags can help you organize, track costs for, and control access to resources.
+type Tag struct {
+	Key   *string `json:"key,omitempty"`
+	Value *string `json:"value,omitempty"`
 }
 
 // The virtual private cloud (VPC) configuration for an access point.

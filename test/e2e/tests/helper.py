@@ -44,3 +44,9 @@ class S3ControlValidator:
         except Exception:
             return None
 
+    def get_access_point_tags(self, account_id: str, arn: str) -> dict:
+        resp = self.s3control_client.list_tags_for_resource(
+            AccountId=account_id,
+            ResourceArn=arn,
+        )
+        return {tag["Key"]: tag["Value"] for tag in resp.get("Tags", [])}

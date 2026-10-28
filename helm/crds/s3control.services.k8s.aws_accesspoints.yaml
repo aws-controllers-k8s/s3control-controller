@@ -76,13 +76,23 @@ spec:
                   Regex Pattern: `^\d{12}$`
                 type: string
               name:
-                description: The name you want to assign to this access point.
+                description: |-
+                  The name you want to assign to this access point.
+
+                  For directory buckets, the access point name must consist of a base name
+                  that you provide and suffix that includes the ZoneID (Amazon Web Services
+                  Availability Zone or Local Zone) of your bucket location, followed by --xa-s3.
+                  For more information, see Managing access to shared datasets in directory
+                  buckets with access points (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-directory-buckets.html)
+                  in the Amazon S3 User Guide.
                 type: string
               policy:
                 description: |-
                   The policy that you want to apply to the specified access point. For more
                   information about access point policies, see Managing data access with Amazon
                   S3 access points (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points.html)
+                  or Managing access to shared datasets in directory buckets with access points
+                  (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-directory-buckets.html)
                   in the Amazon S3 User Guide.
                 type: string
               publicAccessBlockConfiguration:
@@ -99,6 +109,25 @@ spec:
                   restrictPublicBuckets:
                     type: boolean
                 type: object
+              tags:
+                description: |-
+                  An array of tags that you can apply to an access point. Tags are key-value
+                  pairs of metadata used to control access to your access points. For more
+                  information about tags, see Using tags with Amazon S3 (https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html).
+                  For information about tagging access points, see Using tags for attribute-based
+                  access control (ABAC) (https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html#using-tags-for-abac).
+                items:
+                  description: |-
+                    A key-value pair that you use to label your resources. You can add tags to
+                    new resources when you create them, or you can add tags to existing resources.
+                    Tags can help you organize, track costs for, and control access to resources.
+                  properties:
+                    key:
+                      type: string
+                    value:
+                      type: string
+                  type: object
+                type: array
               vpcConfiguration:
                 description: |-
                   If you include this field, Amazon S3 restricts access to this access point

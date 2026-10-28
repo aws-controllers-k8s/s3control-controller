@@ -55,16 +55,31 @@ type AccessPointSpec struct {
 	// Regex Pattern: `^\d{12}$`
 	BucketAccountID *string `json:"bucketAccountID,omitempty"`
 	// The name you want to assign to this access point.
+	//
+	// For directory buckets, the access point name must consist of a base name
+	// that you provide and suffix that includes the ZoneID (Amazon Web Services
+	// Availability Zone or Local Zone) of your bucket location, followed by --xa-s3.
+	// For more information, see Managing access to shared datasets in directory
+	// buckets with access points (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-directory-buckets.html)
+	// in the Amazon S3 User Guide.
 	// +kubebuilder:validation:Required
 	Name *string `json:"name"`
 	// The policy that you want to apply to the specified access point. For more
 	// information about access point policies, see Managing data access with Amazon
 	// S3 access points (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points.html)
+	// or Managing access to shared datasets in directory buckets with access points
+	// (https://docs.aws.amazon.com/AmazonS3/latest/userguide/access-points-directory-buckets.html)
 	// in the Amazon S3 User Guide.
 	Policy *string `json:"policy,omitempty"`
 	// The PublicAccessBlock configuration that you want to apply to the access
 	// point.
 	PublicAccessBlockConfiguration *PublicAccessBlockConfiguration `json:"publicAccessBlockConfiguration,omitempty"`
+	// An array of tags that you can apply to an access point. Tags are key-value
+	// pairs of metadata used to control access to your access points. For more
+	// information about tags, see Using tags with Amazon S3 (https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html).
+	// For information about tagging access points, see Using tags for attribute-based
+	// access control (ABAC) (https://docs.aws.amazon.com/AmazonS3/latest/userguide/tagging.html#using-tags-for-abac).
+	Tags []*Tag `json:"tags,omitempty"`
 	// If you include this field, Amazon S3 restricts access to this access point
 	// to requests from the specified virtual private cloud (VPC).
 	//

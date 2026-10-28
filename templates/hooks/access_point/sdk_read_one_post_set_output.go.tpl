@@ -14,3 +14,13 @@ if policyErr != nil {
 } else {
 	ko.Spec.Policy = policyResp.Policy
 }
+
+// The tagging APIs are not documented for S3 on Outposts access points, so
+// their tags are left as declared and produce no delta.
+if ko.Status.ACKResourceMetadata != nil && ko.Status.ACKResourceMetadata.ARN != nil &&
+	tagsSupported(string(*ko.Status.ACKResourceMetadata.ARN)) {
+	ko.Spec.Tags, err = rm.getTags(ctx, r.ko.Spec.AccountID, string(*ko.Status.ACKResourceMetadata.ARN))
+	if err != nil {
+		return nil, err
+	}
+}

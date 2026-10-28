@@ -55,6 +55,24 @@ const (
 	BucketVersioningStatus_Suspended BucketVersioningStatus = "Suspended"
 )
 
+type ComputeObjectChecksumAlgorithm string
+
+const (
+	ComputeObjectChecksumAlgorithm_CRC32     ComputeObjectChecksumAlgorithm = "CRC32"
+	ComputeObjectChecksumAlgorithm_CRC32C    ComputeObjectChecksumAlgorithm = "CRC32C"
+	ComputeObjectChecksumAlgorithm_CRC64NVME ComputeObjectChecksumAlgorithm = "CRC64NVME"
+	ComputeObjectChecksumAlgorithm_MD5       ComputeObjectChecksumAlgorithm = "MD5"
+	ComputeObjectChecksumAlgorithm_SHA1      ComputeObjectChecksumAlgorithm = "SHA1"
+	ComputeObjectChecksumAlgorithm_SHA256    ComputeObjectChecksumAlgorithm = "SHA256"
+)
+
+type ComputeObjectChecksumType string
+
+const (
+	ComputeObjectChecksumType_COMPOSITE   ComputeObjectChecksumType = "COMPOSITE"
+	ComputeObjectChecksumType_FULL_OBJECT ComputeObjectChecksumType = "FULL_OBJECT"
+)
+
 type DeleteMarkerReplicationStatus string
 
 const (
@@ -211,15 +229,17 @@ const (
 type OperationName string
 
 const (
-	OperationName_LambdaInvoke            OperationName = "LambdaInvoke"
-	OperationName_S3DeleteObjectTagging   OperationName = "S3DeleteObjectTagging"
-	OperationName_S3InitiateRestoreObject OperationName = "S3InitiateRestoreObject"
-	OperationName_S3PutObjectAcl          OperationName = "S3PutObjectAcl"
-	OperationName_S3PutObjectCopy         OperationName = "S3PutObjectCopy"
-	OperationName_S3PutObjectLegalHold    OperationName = "S3PutObjectLegalHold"
-	OperationName_S3PutObjectRetention    OperationName = "S3PutObjectRetention"
-	OperationName_S3PutObjectTagging      OperationName = "S3PutObjectTagging"
-	OperationName_S3ReplicateObject       OperationName = "S3ReplicateObject"
+	OperationName_LambdaInvoke             OperationName = "LambdaInvoke"
+	OperationName_S3ComputeObjectChecksum  OperationName = "S3ComputeObjectChecksum"
+	OperationName_S3DeleteObjectTagging    OperationName = "S3DeleteObjectTagging"
+	OperationName_S3InitiateRestoreObject  OperationName = "S3InitiateRestoreObject"
+	OperationName_S3PutObjectAcl           OperationName = "S3PutObjectAcl"
+	OperationName_S3PutObjectCopy          OperationName = "S3PutObjectCopy"
+	OperationName_S3PutObjectLegalHold     OperationName = "S3PutObjectLegalHold"
+	OperationName_S3PutObjectRetention     OperationName = "S3PutObjectRetention"
+	OperationName_S3PutObjectTagging       OperationName = "S3PutObjectTagging"
+	OperationName_S3ReplicateObject        OperationName = "S3ReplicateObject"
+	OperationName_S3UpdateObjectEncryption OperationName = "S3UpdateObjectEncryption"
 )
 
 type OutputSchemaVersion string
@@ -315,10 +335,11 @@ const (
 type S3ChecksumAlgorithm string
 
 const (
-	S3ChecksumAlgorithm_CRC32  S3ChecksumAlgorithm = "CRC32"
-	S3ChecksumAlgorithm_CRC32C S3ChecksumAlgorithm = "CRC32C"
-	S3ChecksumAlgorithm_SHA1   S3ChecksumAlgorithm = "SHA1"
-	S3ChecksumAlgorithm_SHA256 S3ChecksumAlgorithm = "SHA256"
+	S3ChecksumAlgorithm_CRC32     S3ChecksumAlgorithm = "CRC32"
+	S3ChecksumAlgorithm_CRC32C    S3ChecksumAlgorithm = "CRC32C"
+	S3ChecksumAlgorithm_CRC64NVME S3ChecksumAlgorithm = "CRC64NVME"
+	S3ChecksumAlgorithm_SHA1      S3ChecksumAlgorithm = "SHA1"
+	S3ChecksumAlgorithm_SHA256    S3ChecksumAlgorithm = "SHA256"
 )
 
 type S3GlacierJobTier string
@@ -404,6 +425,19 @@ type SSEKMSEncryptedObjectsStatus string
 const (
 	SSEKMSEncryptedObjectsStatus_Disabled SSEKMSEncryptedObjectsStatus = "Disabled"
 	SSEKMSEncryptedObjectsStatus_Enabled  SSEKMSEncryptedObjectsStatus = "Enabled"
+)
+
+type ScopePermission string
+
+const (
+	ScopePermission_AbortMultipartUpload       ScopePermission = "AbortMultipartUpload"
+	ScopePermission_DeleteObject               ScopePermission = "DeleteObject"
+	ScopePermission_GetObject                  ScopePermission = "GetObject"
+	ScopePermission_GetObjectAttributes        ScopePermission = "GetObjectAttributes"
+	ScopePermission_ListBucket                 ScopePermission = "ListBucket"
+	ScopePermission_ListBucketMultipartUploads ScopePermission = "ListBucketMultipartUploads"
+	ScopePermission_ListMultipartUploadParts   ScopePermission = "ListMultipartUploadParts"
+	ScopePermission_PutObject                  ScopePermission = "PutObject"
 )
 
 type TransitionStorageClass string
